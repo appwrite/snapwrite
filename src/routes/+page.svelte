@@ -32,14 +32,6 @@
 			value: '1'
 		},
 		{
-			label: 'Instagram (Portrait)',
-			value: '1080/1350'
-		},
-		{
-			label: 'Stories (IG, LinkedIn)',
-			value: '1080/1920'
-		},
-		{
 			label: 'Twitter (One Image)',
 			value: '2400/1350'
 		},
@@ -54,6 +46,14 @@
 		{
 			label: 'Dribble',
 			value: '2800/2100'
+		},
+		{
+			label: 'Instagram (Portrait)',
+			value: '1080/1350'
+		},
+		{
+			label: 'Stories (IG, LinkedIn)',
+			value: '1080/1920'
 		}
 	];
 	let ratio = ratios[0].value;
