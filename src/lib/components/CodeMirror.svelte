@@ -11,22 +11,39 @@
 	import { EditorView, keymap, placeholder as placeholderExt } from '@codemirror/view';
 	import { EditorState, StateEffect, type Extension } from '@codemirror/state';
 	import { indentWithTab } from '@codemirror/commands';
-	import { indentUnit, type LanguageSupport } from '@codemirror/language';
+	import {
+		HighlightStyle,
+		indentUnit,
+		syntaxHighlighting,
+		type LanguageSupport
+	} from '@codemirror/language';
 	import { debounce } from '$lib/utils/debounce.js';
+	import { javascript } from '@codemirror/lang-javascript';
+	import { html } from '@codemirror/lang-html';
+	import { css } from '@codemirror/lang-css';
+	import { tags } from '@lezer/highlight';
+
+	const languagePresets = {
+		javascript: javascript,
+		typescript: () => javascript({ typescript: true }),
+		jsx: () => javascript({ jsx: true }),
+		tsx: () => javascript({ jsx: true, typescript: true }),
+		html: html,
+		css: css
+	} as const;
+	type LanguagePreset = keyof typeof languagePresets;
 
 	let classes = '';
 	export { classes as class };
 	export let value: string | null | undefined = '';
 
 	export let basic = true;
-	export let lang: LanguageSupport | null | undefined = undefined;
-	export let theme: Extension | null | undefined = undefined;
+	export let lang: LanguagePreset | null | undefined = undefined;
 	export let extensions: Extension[] = [];
 
 	export let useTab = true;
 	export let tabSize = 2;
 
-	export let styles: ThemeSpec | null | undefined = undefined;
 	export let lineWrapping = false;
 	export let editable = true;
 	export let readonly = false;
@@ -52,9 +69,18 @@
 			placeholder,
 			editable,
 			readonly,
-			lang
+			languagePresets[lang ?? 'javascript']?.()
 		),
-		...get_theme(theme, styles),
+		syntaxHighlighting(
+			HighlightStyle.define([
+				{ tag: tags.moduleKeyword, color: 'var(--color-accent)' },
+				{ tag: tags.keyword, color: '#FE9567' },
+				{ tag: tags.comment, color: '#6E6E71' },
+				{ tag: tags.propertyName, color: '#67A3FE' },
+				{ tag: tags.string, color: '#4AD4AB' }
+			])
+		),
+		EditorView.theme({}),
 		...extensions
 	];
 
@@ -150,16 +176,6 @@
 
 		return extensions;
 	}
-
-	function get_theme(
-		theme: Extension | null | undefined,
-		styles: ThemeSpec | null | undefined
-	): Extension[] {
-		const extensions: Extension[] = [];
-		if (styles) extensions.push(EditorView.theme(styles));
-		if (theme) extensions.push(theme);
-		return extensions;
-	}
 </script>
 
 {#if is_browser}
@@ -175,7 +191,7 @@
 	</div>
 {/if}
 
-<style>
+<style lang="scss">
 	.codemirror-wrapper :global(.cm-focused) {
 		outline: none;
 	}
@@ -226,6 +242,19 @@
 		}
 		100% {
 			transform: rotate(360deg);
+		}
+	}
+
+	.codemirror-wrapper {
+		font-size: 1rem;
+		:global(.cm-gutters) {
+			background-color: transparent;
+			color: var(--color-greyscale-500);
+			border-color: transparent;
+		}
+
+		:global(.cm-activeLineGutter) {
+			background-color: transparent;
 		}
 	}
 </style>

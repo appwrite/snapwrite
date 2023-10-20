@@ -1,11 +1,6 @@
 // uno.config.ts
 import { DynamicMatcher, Rule, defineConfig } from 'unocss';
 
-function isValidColorNum(match: RegExpMatchArray) {
-	const num = parseInt(match[2]);
-	return num >= 0 && num <= 12;
-}
-
 function pxToRem(num: number) {
 	return `${num / 16}rem`;
 }
@@ -13,12 +8,13 @@ function pxToRem(num: number) {
 const colorUtilities: Rule[] = [
 	['color', 'color'],
 	['bg', 'background-color'],
-	['border', 'border-color']
+	['bc', 'border-color']
 ].map(([prefix, property]) => [
-	new RegExp(`^${prefix}-(\\w+)-(\\d+)$`),
+	new RegExp(`^${prefix}-(.+)$`),
 	((match) => {
-		if (!isValidColorNum(match)) return false;
-		return { [property]: `var(--color-${match[1]}-${match[2]})` };
+		const color = match[1];
+		if (color.startsWith('rgb') || color.startsWith('#')) return { [property]: color };
+		return { [property]: `var(--color-${match[1]});` };
 	}) as DynamicMatcher
 ]);
 
@@ -27,25 +23,37 @@ const spacingUtilities: Rule[] = [
 	['mi', 'margin-inline'],
 	['mis', 'margin-inline-start'],
 	['mie', 'margin-inline-end'],
+	['mblock', 'margin-block'],
+	['mblck', 'margin-block'],
 	['mk', 'margin-block'],
+	['mbs', 'margin-block-start'],
 	['mks', 'margin-block-start'],
+	['mbe', 'margin-block-end'],
 	['mke', 'margin-block-end'],
 	['p', 'padding'],
 	['pi', 'padding-inline'],
 	['pis', 'padding-inline-start'],
 	['pie', 'padding-inline-end'],
+	['pblock', 'padding-block'],
+	['pblck', 'padding-block'],
 	['pk', 'padding-block'],
+	['pbs', 'padding-block-start'],
 	['pks', 'padding-block-start'],
+	['pbe', 'padding-block-end'],
 	['pke', 'padding-block-end'],
 	['w', 'width'],
 	['h', 'height'],
 	['min-w', 'min-width'],
-	['min-h', 'min-height']
-].map(([prefix, property]) => [
+	['min-h', 'min-height'],
+	['square', 'width', 'height'],
+	['gap', 'gap']
+].map(([prefix, ...properties]) => [
 	new RegExp(`^${prefix}-(\\d+)$`),
 	((match) => {
 		const num = parseInt(match[1]);
-		return { [property]: pxToRem(num) };
+		const value = Number.isNaN(num) ? match[1] : pxToRem(num);
+
+		return Object.fromEntries(properties.map((property) => [property, value]));
 	}) as DynamicMatcher
 ]);
 
