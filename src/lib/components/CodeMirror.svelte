@@ -80,7 +80,7 @@
 				{ tag: tags.string, color: '#4AD4AB' }
 			])
 		),
-		EditorView.theme({}),
+		EditorView.theme({}, { dark: true }),
 		...extensions
 	];
 
@@ -254,6 +254,14 @@
 		}
 
 		:global(.cm-activeLineGutter) {
+			background-color: transparent;
+		}
+
+		:global(.cm-cursor) {
+			border-color: var(--color-primary);
+		}
+
+		:global(.cm-activeLine) {
 			background-color: transparent;
 		}
 	}
