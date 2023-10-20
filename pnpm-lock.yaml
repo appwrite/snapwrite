@@ -67,6 +67,9 @@ devDependencies:
   codemirror:
     specifier: ^6.0.1
     version: 6.0.1(@lezer/common@1.1.0)
+  dom-to-image-more:
+    specifier: ^3.2.0
+    version: 3.2.0
   eslint:
     specifier: ^8.51.0
     version: 8.51.0
@@ -1371,6 +1374,10 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       esutils: 2.0.3
+    dev: true
+
+  /dom-to-image-more@3.2.0:
+    resolution: {integrity: sha512-2bGQTB6m17MBseVhIjShwZqqqCyVS9GgTykWqvVXMqr56fSgHhXnEvZfZkaSuHJYW3ICZQ3sZwAu+UY5tfsF9Q==}
     dev: true
 
   /duplexer@0.1.2:

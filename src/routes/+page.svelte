@@ -3,7 +3,7 @@
 	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
-	import { createPopover, melt, type SelectOption } from '@melt-ui/svelte';
+	import { melt, type SelectOption } from '@melt-ui/svelte';
 
 	const langOptions: SelectOption<LanguagePreset>[] = [
 		{
@@ -33,6 +33,31 @@
 		lang;
 		scale = 1;
 	}
+
+	let frame: HTMLElement;
+
+	import domtoimage from 'dom-to-image-more';
+	let url;
+
+	function exporter(format: 'svg' | 'png' | 'jpg', size: 1 | 2 | 3 = 1) {
+		return () => {
+			if (format === 'png') {
+				domtoimage.toPng(frame).then(function (dataUrl) {
+					url = dataUrl;
+					// Save locally
+					fetch(dataUrl)
+						.then((res) => res.blob())
+						.then((blob) => {
+							const url = URL.createObjectURL(blob);
+							const a = document.createElement('a');
+							a.href = url;
+							a.download = 'code.png';
+							a.click();
+						});
+				});
+			}
+		};
+	}
 </script>
 
 <main>
@@ -54,41 +79,31 @@
 					<div class="flex justify-between items-center">
 						<span class="font-500">SVG</span>
 
-						<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-1"
-							>1x</button
-						>
+						<button class="rounded-1">1x</button>
 					</div>
 					<div class="flex justify-between items-center">
 						<span class="font-500">PNG</span>
 						<div class="flex gap-2">
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-l-1"
-								>1x</button
-							>
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8">2x</button>
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-r-1"
-								>3x</button
-							>
+							<button class="rounded-l-1" on:click={exporter('png')}>1x</button>
+							<button>2x</button>
+							<button class="rounded-r-1">3x</button>
 						</div>
 					</div>
 					<div class="flex justify-between items-center">
 						<span class="font-500">JPG</span>
 						<div class="flex gap-2">
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-l-1"
-								>1x</button
-							>
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8">2x</button>
-							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-r-1"
-								>3x</button
-							>
+							<button class="rounded-l-1">1x</button>
+							<button>2x</button>
+							<button class="rounded-r-1">3x</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</Popover>
 	</div>
-
+	<img src={url} alt="" />
 	<div class="grid place-items-center grow w-full">
-		<div class="frame">
+		<div class="frame" bind:this={frame}>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
 					<div class="square-12 bg-#EC6A5E rounded-full" />
@@ -160,6 +175,8 @@ const user = await account.create('[USER_ID]',
 		display: grid;
 		place-items: center;
 
+		overflow: hidden;
+
 		.code-window {
 			@include with-border-gradient;
 			min-width: 500px;
@@ -185,5 +202,15 @@ const user = await account.create('[USER_ID]',
 
 		background-color: var(--color-subtle);
 		min-width: 200px;
+
+		button {
+			background-color: hsl(var(--color-greyscale-700-hsl) / 0.25);
+			padding: 0.375rem;
+			padding-inline: 0.5rem;
+
+			&:hover {
+				background-color: hsl(var(--color-greyscale-700-hsl) / 0.5);
+			}
+		}
 	}
 </style>
