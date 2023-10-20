@@ -1,0 +1,19 @@
+<script lang="ts">
+	import { createPopover, melt } from '@melt-ui/svelte';
+	import { fly } from 'svelte/transition';
+
+	const {
+		elements: { content, trigger },
+		states: { open }
+	} = createPopover({
+		forceVisible: true
+	});
+</script>
+
+<slot name="trigger" trigger={$trigger} />
+
+{#if $open}
+	<div use:melt={$content} transition:fly={{ duration: 150, y: -2 }}>
+		<slot />
+	</div>
+{/if}

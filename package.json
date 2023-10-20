@@ -44,5 +44,9 @@
 		"unocss": "^0.56.5",
 		"vite": "^4.5.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@fontsource/fira-code": "^5.0.14",
+		"@fontsource/inter": "^5.0.14"
+	}
 }

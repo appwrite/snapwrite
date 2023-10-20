@@ -1,0 +1,185 @@
+@use '../mixins' as *;
+
+.button {
+	--p-border-radius: 0.5rem;
+	--p-border-size: 0.0625rem;
+
+	background: linear-gradient(
+		135deg,
+		hsl(var(--color-pink-500)) 0%,
+		hsl(var(--color-pink-500)) 61%,
+		hsl(var(--color-secondary-100)) 100%
+	);
+	background-origin: border-box;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+
+	cursor: pointer;
+
+	inline-size: fit-content;
+
+	padding-inline: 0.875rem;
+	padding-block: 0.4375rem;
+
+	min-block-size: 2.5rem;
+	border-radius: var(--p-border-radius);
+	border: solid var(--p-border-size) transparent;
+	color: hsl(var(--color-white));
+
+	text-align: center;
+	transition: 150ms ease;
+	user-select: none;
+
+	font-size: 1rem;
+	font-weight: 500;
+	text-decoration: none !important;
+
+	[class*='icon'] {
+		line-height: 1;
+	}
+
+	&:where(:hover):where(:not(disabled)) {
+		box-shadow: 0 0 2rem 0 rgba(253, 54, 110, 0.32);
+	}
+
+	&:where(:active):where(:not(disabled)) {
+		box-shadow: 0 0 2rem 0 rgba(253, 54, 110, 0.24);
+	}
+
+	&:where(:focus-visible) {
+		box-shadow: 0 0 0 0.25rem rgba(253, 54, 110, 0.48);
+	}
+	&:where(disabled) {
+		opacity: 0.4;
+		cursor: initial;
+	}
+
+	&.is-secondary {
+		background-image: none;
+		position: relative;
+		border-width: 0;
+
+		@include border-gradient;
+
+		background: rgba(253, 54, 110, 0.04);
+		color: hsl(var(--color-greyscale-100));
+		box-shadow: 0px -6px 10px 0px rgba(253, 54, 110, 0.08) inset;
+		[class*='icon'] {
+			color: hsl(var(--color-pink-500));
+		}
+
+		--p-border-gradient-before: linear-gradient(
+			to bottom,
+			rgba(253, 54, 110, 0.48) 0%,
+			rgba(253, 54, 110, 0) 180%
+		);
+
+		--p-border-gradient-after: radial-gradient(
+			42.86% 42.86% at 50.55% -0%,
+			rgba(255, 255, 255, 0.2) 0%,
+			rgba(255, 255, 255, 0) 100%
+		);
+
+		&:where(:hover):not(:disabled) {
+			background: rgba(253, 54, 110, 0.1);
+			box-shadow: 0px -6px 10px 0px rgba(253, 54, 110, 0.08) inset;
+			--p-border-gradient-before: linear-gradient(
+				180deg,
+				rgba(253, 54, 110, 0.64) 0%,
+				rgba(253, 54, 110, 0) 163.1%
+			);
+			--p-border-gradient-after: radial-gradient(
+				42.86% 42.86% at 50.55% 0%,
+				rgba(255, 255, 255, 0.2) 0%,
+				rgba(255, 255, 255, 0) 100%
+			);
+		}
+
+		&:where(:active):not(:disabled) {
+			background: rgba(253, 54, 110, 0.16);
+			box-shadow: 0px -6px 10px 0px rgba(253, 54, 110, 0.08) inset;
+			--p-border-gradient-before: linear-gradient(
+				180deg,
+				rgba(253, 54, 110, 0.64) 0%,
+				rgba(253, 54, 110, 0) 163.1%
+			);
+			--p-border-gradient-after: radial-gradient(
+				42.86% 42.86% at 50.55% 0%,
+				rgba(255, 255, 255, 0.32) 0%,
+				rgba(255, 255, 255, 0) 100%
+			);
+		}
+
+		&:where(:focus-visible):not(:disabled) {
+			background: rgba(253, 54, 110, 0.04);
+			box-shadow: 0px 0px 0px 4px rgba(253, 54, 110, 0.16),
+				0px -6px 10px 0px rgba(253, 54, 110, 0.08) inset;
+		}
+	}
+	&.is-transparent {
+		background: rgba(237, 237, 240, 0.16);
+		border-width: 0;
+	}
+	&.is-text {
+		color: hsl(var(--color-greyscale-700));
+		background: hsl(var(--transparent));
+		border-color: transparent;
+		transition: none;
+		[class*='icon'] {
+			opacity: 0.4;
+		}
+
+		&:where(:focus) {
+			box-shadow: none;
+
+			outline: 4px solid rgba(255, 255, 255, 0.16);
+		}
+
+		&:where(:hover, :active, [data-highlighted]):where(:not(disabled)) {
+			box-shadow: none;
+			color: hsl(var(--color-greyscale-900));
+
+			-webkit-backdrop-filter: blur(0.5rem);
+			backdrop-filter: blur(0.5rem);
+
+			color: hsl(var(--color-neutral-0));
+		}
+		&:where(:hover, [data-highlighted]):where(:not(disabled)) {
+			background: linear-gradient(
+				135deg,
+				rgba(255, 255, 255, 0.38) 0%,
+				rgba(255, 255, 255, 0.51) 54.74%,
+				rgba(255, 255, 255, 0.38) 100%
+			);
+		}
+		&:where(:active):where(:not(disabled)) {
+			background: linear-gradient(
+				135deg,
+				rgba(255, 255, 255, 0.6) 0%,
+				rgba(255, 255, 255, 0.8) 54.74%,
+				rgba(255, 255, 255, 0.6) 100%
+			);
+		}
+
+		color: hsl(var(--color-neutral-0));
+		&:where(:hover, [data-highlighted]):where(:not(disabled)) {
+			background: linear-gradient(
+				135deg,
+				rgba(255, 255, 255, 0.06) 0%,
+				rgba(255, 255, 255, 0.1) 54.74%,
+				rgba(255, 255, 255, 0.06) 100%
+			);
+		}
+		&:where(:active):where(:not(disabled)) {
+			background: linear-gradient(
+				135deg,
+				rgba(255, 255, 255, 0.09) 0%,
+				rgba(255, 255, 255, 0.15) 54.74%,
+				rgba(255, 255, 255, 0.09) 100%
+			);
+		}
+	}
+}

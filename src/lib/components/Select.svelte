@@ -131,8 +131,6 @@
 
 <style lang="scss">
 	[data-melt-select-trigger] {
-		all: unset;
-
 		@include border-gradient;
 		--p-border-radius: 0.5rem;
 		--p-border-gradient-before: linear-gradient(

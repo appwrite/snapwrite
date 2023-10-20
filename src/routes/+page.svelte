@@ -1,21 +1,30 @@
 <script lang="ts">
 	import CodeMirror, { type LanguagePreset } from '$lib/components/CodeMirror.svelte';
+	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
-	import type { SelectOption } from '@melt-ui/svelte';
+	import { createPopover, melt, type SelectOption } from '@melt-ui/svelte';
 
 	const langOptions: SelectOption<LanguagePreset>[] = [
 		{
-			value: 'javascript',
-			label: 'Javascript'
+			value: 'typescript',
+			label: 'Typescript'
 		},
 		{
 			value: 'html',
 			label: 'HTML'
+		},
+		{
+			value: 'css',
+			label: 'CSS'
+		},
+		{
+			value: 'tsx',
+			label: 'TSX'
 		}
 	];
 
-	let lang: LanguagePreset = 'javascript';
+	let lang: LanguagePreset = 'typescript';
 	let fontSize = 16;
 	let scale = 1;
 
@@ -27,11 +36,55 @@
 </script>
 
 <main>
-	<div class="toolbar flex items-baseline gap-32">
+	<div class="toolbar flex flex-wrap items-baseline gap-32">
 		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
 		<Slider label="Scale" bind:value={scale} min={0.1} max={3} step={0.1} />
+		<Popover>
+			<button
+				slot="trigger"
+				let:trigger
+				class="button is-secondary mis-auto self-center"
+				use:melt={trigger}>Export</button
+			>
+
+			<div class="exporter p-16">
+				<div class="flex flex-col gap-16">
+					<div class="flex justify-between items-center">
+						<span class="font-500">SVG</span>
+
+						<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-1"
+							>1x</button
+						>
+					</div>
+					<div class="flex justify-between items-center">
+						<span class="font-500">PNG</span>
+						<div class="flex gap-2">
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-l-1"
+								>1x</button
+							>
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8">2x</button>
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-r-1"
+								>3x</button
+							>
+						</div>
+					</div>
+					<div class="flex justify-between items-center">
+						<span class="font-500">JPG</span>
+						<div class="flex gap-2">
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-l-1"
+								>1x</button
+							>
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8">2x</button>
+							<button class="bg-greyscale-700/0.25 hover:bg-greyscale-700/0.5 p-6 pi-8 rounded-r-1"
+								>3x</button
+							>
+						</div>
+					</div>
+				</div>
+			</div>
+		</Popover>
 	</div>
 
 	<div class="grid place-items-center grow w-full">
@@ -82,6 +135,7 @@ const user = await account.create('[USER_ID]',
 
 		padding: 1rem;
 		margin-inline: auto;
+		min-width: 900px;
 		max-width: 1440px;
 	}
 
@@ -123,5 +177,13 @@ const user = await account.create('[USER_ID]',
 				padding: 2rem;
 			}
 		}
+	}
+
+	.exporter {
+		@include with-border-gradient;
+		--p-border-radius: 0.75rem;
+
+		background-color: var(--color-subtle);
+		min-width: 200px;
 	}
 </style>

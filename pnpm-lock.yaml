@@ -4,6 +4,14 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  '@fontsource/fira-code':
+    specifier: ^5.0.14
+    version: 5.0.14
+  '@fontsource/inter':
+    specifier: ^5.0.14
+    version: 5.0.14
+
 devDependencies:
   '@codemirror/commands':
     specifier: ^6.3.0
@@ -481,6 +489,14 @@ packages:
   /@floating-ui/utils@0.1.6:
     resolution: {integrity: sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==}
     dev: true
+
+  /@fontsource/fira-code@5.0.14:
+    resolution: {integrity: sha512-XAATSwSME0Lx4Pxk67QJhMiX6tpJxf9oc73s+EoXSqW8Qiko8gy+3enfDdVPnducwIv8+CGduQmhYkqs03q8xA==}
+    dev: false
+
+  /@fontsource/inter@5.0.14:
+    resolution: {integrity: sha512-5H+rWUemTnUrtF5Dov2zDq+RWDIoXCmSrupNIfI5x7udZnoUTNhr+k9sYxtNS22mIngUQHZUPexTMj0/7P0Ucg==}
+    dev: false
 
   /@humanwhocodes/config-array@0.11.12:
     resolution: {integrity: sha512-NlGesA1usRNn6ctHCZ21M4/dKPgW9Nn1FypRdIKKgZOKzkVV4T1FlK5mBiLhHBCDmEbdQG0idrcXlbZfksJ+RA==}

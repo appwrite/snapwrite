@@ -14,6 +14,10 @@ const colorUtilities: Rule[] = [
 	((match) => {
 		const color = match[1];
 		if (color.startsWith('rgb') || color.startsWith('#')) return { [property]: color };
+		if (color.includes('/')) {
+			const [clr, opacity] = color.split('/');
+			return { [property]: `hsl(var(--color-${clr}-hsl) / ${opacity})` };
+		}
 		return { [property]: `var(--color-${match[1]});` };
 	}) as DynamicMatcher
 ]);
