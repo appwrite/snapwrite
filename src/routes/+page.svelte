@@ -3,6 +3,7 @@
 	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
+	import { save, toImage } from '$lib/utils/toImage';
 	import { melt, type SelectOption } from '@melt-ui/svelte';
 
 	const langOptions: SelectOption<LanguagePreset>[] = [
@@ -23,8 +24,40 @@
 			label: 'TSX'
 		}
 	];
-
 	let lang: LanguagePreset = 'typescript';
+
+	const ratios: SelectOption<string>[] = [
+		{
+			label: 'Square',
+			value: '1'
+		},
+		{
+			label: 'Instagram (Portrait)',
+			value: '1080/1350'
+		},
+		{
+			label: 'Stories (IG, LinkedIn)',
+			value: '1080/1920'
+		},
+		{
+			label: 'Twitter (One Image)',
+			value: '2400/1350'
+		},
+		{
+			label: 'Twitter (Two Images)',
+			value: '2800/3200'
+		},
+		{
+			label: 'Product Hunt (Gallery)',
+			value: '2540/1520'
+		},
+		{
+			label: 'Dribble',
+			value: '2800/2100'
+		}
+	];
+	let ratio = ratios[0].value;
+
 	let fontSize = 16;
 	let scale = 1;
 
@@ -36,51 +69,10 @@
 
 	let frame: HTMLElement;
 
-	import domtoimage, { type Options } from 'dom-to-image';
-
-	function save(dataUrl: string) {
-		fetch(dataUrl)
-			.then((res) => res.blob())
-			.then((blob) => {
-				const url = URL.createObjectURL(blob);
-				const a = document.createElement('a');
-				a.href = url;
-				a.download = 'code.png';
-				a.click();
-				a.remove();
-			});
-	}
-
 	let url = '';
 	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
 		return async () => {
-			const options: Options = {
-				width: frame.offsetWidth * size,
-				height: frame.offsetHeight * size,
-				quality: 1,
-				style: {
-					transform: `scale(${size})`,
-					transformOrigin: 'top left',
-					width: `${frame.offsetWidth}px`,
-					height: `${frame.offsetHeight}px`
-				}
-			};
-
-			let dataUrl: string;
-			switch (format) {
-				case 'png': {
-					dataUrl = await domtoimage.toPng(frame, options);
-					break;
-				}
-				case 'svg': {
-					dataUrl = await domtoimage.toSvg(frame, options);
-					break;
-				}
-				case 'jpg': {
-					dataUrl = await domtoimage.toJpeg(frame, options);
-					break;
-				}
-			}
+			const dataUrl = await toImage(frame, format, size);
 
 			save(dataUrl);
 			// url = dataUrl;
@@ -89,11 +81,12 @@
 </script>
 
 <main>
-	<div class="toolbar flex flex-wrap items-baseline gap-32">
-		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
+	<div class="toolbar flex flex-wrap items-baseline gap-16">
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
 		<Slider label="Scale" bind:value={scale} min={0.1} max={3} step={0.1} />
+		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
+		<Select label="Ratio" options={ratios} bind:value={ratio} --p-min-w="14rem" />
 		<Popover>
 			<button
 				slot="trigger"
@@ -130,8 +123,9 @@
 		</Popover>
 	</div>
 	<img src={url} alt="" srcset="" />
-	<div class="grid place-items-center grow w-full">
-		<div class="frame" bind:this={frame}>
+
+	<div class="relative grow self-stretch overflow-hidden">
+		<div class="frame grow" bind:this={frame} style:--p-ratio={ratio}>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
 					<div class="square-12 bg-#EC6A5E rounded-full" />
@@ -144,8 +138,8 @@
 						{lang}
 						value={`import { Client, Account } from "appwrite";
 const client = new Client()
-	.setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-	.setProject('<PROJECT_ID>');                 // Your project ID
+  .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
+  .setProject('<PROJECT_ID>');                 // Your project ID
 	
 const account = new Account(client);
 	
@@ -175,6 +169,7 @@ const user = await account.create('[USER_ID]',
 		align-items: center;
 		gap: 1rem;
 		height: 100vh;
+		overflow: hidden;
 
 		padding: 1rem;
 		margin-inline: auto;
@@ -194,8 +189,13 @@ const user = await account.create('[USER_ID]',
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
-		aspect-ratio: 1200 / 675;
-		width: 100%;
+		border-radius: 1rem;
+
+		aspect-ratio: var(--p-ratio);
+
+		max-width: 100%;
+		max-height: 100%;
+		margin-inline: auto;
 
 		padding: 1rem;
 		align-self: center;

@@ -147,7 +147,7 @@
 		justify-content: space-between;
 		gap: 0.5rem;
 
-		min-width: 10rem;
+		min-width: var(--p-min-w, 10rem);
 
 		transition: 150ms ease;
 
