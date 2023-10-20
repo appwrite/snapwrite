@@ -36,26 +36,54 @@
 
 	let frame: HTMLElement;
 
-	import domtoimage from 'dom-to-image-more';
-	let url;
+	import domtoimage, { type Options } from 'dom-to-image';
 
-	function exporter(format: 'svg' | 'png' | 'jpg', size: 1 | 2 | 3 = 1) {
-		return () => {
-			if (format === 'png') {
-				domtoimage.toPng(frame).then(function (dataUrl) {
-					url = dataUrl;
-					// Save locally
-					fetch(dataUrl)
-						.then((res) => res.blob())
-						.then((blob) => {
-							const url = URL.createObjectURL(blob);
-							const a = document.createElement('a');
-							a.href = url;
-							a.download = 'code.png';
-							a.click();
-						});
-				});
+	function save(dataUrl: string) {
+		fetch(dataUrl)
+			.then((res) => res.blob())
+			.then((blob) => {
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = 'code.png';
+				a.click();
+				a.remove();
+			});
+	}
+
+	let url = '';
+	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
+		return async () => {
+			const options: Options = {
+				width: frame.offsetWidth * size,
+				height: frame.offsetHeight * size,
+				quality: 1,
+				style: {
+					transform: `scale(${size})`,
+					transformOrigin: 'top left',
+					width: `${frame.offsetWidth}px`,
+					height: `${frame.offsetHeight}px`
+				}
+			};
+
+			let dataUrl: string;
+			switch (format) {
+				case 'png': {
+					dataUrl = await domtoimage.toPng(frame, options);
+					break;
+				}
+				case 'svg': {
+					dataUrl = await domtoimage.toSvg(frame, options);
+					break;
+				}
+				case 'jpg': {
+					dataUrl = await domtoimage.toJpeg(frame, options);
+					break;
+				}
 			}
+
+			save(dataUrl);
+			// url = dataUrl;
 		};
 	}
 </script>
@@ -79,29 +107,29 @@
 					<div class="flex justify-between items-center">
 						<span class="font-500">SVG</span>
 
-						<button class="rounded-1">1x</button>
+						<button class="rounded-1" on:click={exporter('svg')}>1x</button>
 					</div>
 					<div class="flex justify-between items-center">
 						<span class="font-500">PNG</span>
 						<div class="flex gap-2">
 							<button class="rounded-l-1" on:click={exporter('png')}>1x</button>
-							<button>2x</button>
-							<button class="rounded-r-1">3x</button>
+							<button on:click={exporter('png', 2)}>2x</button>
+							<button class="rounded-r-1" on:click={exporter('png', 3)}>3x</button>
 						</div>
 					</div>
 					<div class="flex justify-between items-center">
 						<span class="font-500">JPG</span>
 						<div class="flex gap-2">
-							<button class="rounded-l-1">1x</button>
-							<button>2x</button>
-							<button class="rounded-r-1">3x</button>
+							<button class="rounded-l-1" on:click={exporter('jpg')}>1x</button>
+							<button on:click={exporter('jpg', 2)}>2x</button>
+							<button class="rounded-r-1" on:click={exporter('jpg', 3)}>3x</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</Popover>
 	</div>
-	<img src={url} alt="" />
+	<img src={url} alt="" srcset="" />
 	<div class="grid place-items-center grow w-full">
 		<div class="frame" bind:this={frame}>
 			<div class="code-window" style:--p-scale={scale}>
