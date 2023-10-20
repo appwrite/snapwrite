@@ -105,7 +105,7 @@
 								<span class={option.icon} aria-hidden="true" />
 							{/if}
 							<span class="capitalize">{option.label}</span>
-							<div class="i-tabler-check" />
+							<div class="icon i-tabler-check" />
 						</button>
 					{/each}
 				</div>
@@ -191,7 +191,7 @@
 			background-color: hsl(var(--color-greyscale-700-hsl) / 0.25);
 		}
 
-		[class*='i-'] {
+		.icon {
 			position: absolute;
 			right: 0.5rem;
 			top: 50%;
@@ -199,7 +199,7 @@
 			opacity: 0;
 		}
 
-		&[data-selected] [class*='i-'] {
+		&[data-selected] .icon {
 			opacity: 1;
 		}
 	}
