@@ -1,0 +1,26 @@
+@mixin border-gradient-inner {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: var(--p-border-radius);
+	border: var(--p-border-size, 1px) solid transparent;
+	-webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: destination-out;
+	mask-composite: exclude;
+	pointer-events: none;
+}
+
+@mixin border-gradient {
+	position: relative;
+	border-radius: var(--p-border-radius);
+
+	&::before {
+		@include border-gradient-inner;
+		background: var(--p-border-gradient-before) border-box;
+	}
+
+	&::after {
+		@include border-gradient-inner;
+		background: var(--p-border-gradient-after) border-box;
+	}
+}
