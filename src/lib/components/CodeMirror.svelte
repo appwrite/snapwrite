@@ -3,6 +3,16 @@
 	export type StyleSpec = {
 		[propOrSelector: string]: string | number | StyleSpec | null;
 	};
+
+	const languagePresets = {
+		javascript: javascript,
+		typescript: () => javascript({ typescript: true }),
+		jsx: () => javascript({ jsx: true }),
+		tsx: () => javascript({ jsx: true, typescript: true }),
+		html: html,
+		css: css
+	} as const;
+	export type LanguagePreset = keyof typeof languagePresets;
 </script>
 
 <script lang="ts">
@@ -22,16 +32,6 @@
 	import { html } from '@codemirror/lang-html';
 	import { css } from '@codemirror/lang-css';
 	import { tags } from '@lezer/highlight';
-
-	const languagePresets = {
-		javascript: javascript,
-		typescript: () => javascript({ typescript: true }),
-		jsx: () => javascript({ jsx: true }),
-		tsx: () => javascript({ jsx: true, typescript: true }),
-		html: html,
-		css: css
-	} as const;
-	type LanguagePreset = keyof typeof languagePresets;
 
 	let classes = '';
 	export { classes as class };
@@ -74,7 +74,7 @@
 		syntaxHighlighting(
 			HighlightStyle.define([
 				{ tag: tags.moduleKeyword, color: 'var(--color-accent)' },
-				{ tag: tags.keyword, color: '#FE9567' },
+				{ tag: [tags.keyword, tags.tagName], color: '#FE9567' },
 				{ tag: tags.comment, color: '#6E6E71' },
 				{ tag: tags.propertyName, color: '#67A3FE' },
 				{ tag: tags.string, color: '#4AD4AB' }
@@ -246,7 +246,7 @@
 	}
 
 	.codemirror-wrapper {
-		font-size: 1rem;
+		font-size: var(--p-font-size, 16px);
 		:global(.cm-gutters) {
 			background-color: transparent;
 			color: var(--color-greyscale-500);

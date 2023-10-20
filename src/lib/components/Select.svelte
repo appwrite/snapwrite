@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	export type SelectOption<T = unknown> = {
 		value: T;
-		label: string;
+		label?: string;
 		icon?: string;
 		group?: string;
 	};
@@ -12,22 +12,22 @@
 	import { createEventDispatcher } from 'svelte';
 	import { fly, type FlyParams } from 'svelte/transition';
 
-	export let options: Array<SelectOption>;
-	export let nativeMobile = false;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	export let options: Array<SelectOption<any>>;
+
 	export let value: unknown | undefined = undefined;
 	export let onSelectedChange: CreateSelectProps['onSelectedChange'] = undefined;
-	// TODO: This id currently gets overriden by Melt. We should either use the label el, or
-	// allow passing down ids in Melt.
-	export let id: string | undefined = undefined;
+
 	export let preventScroll = false;
 	export let placement: NonNullable<CreateSelectProps['positioning']>['placement'] = 'bottom';
+	export let label: string;
 
 	const dispatch = createEventDispatcher<{
 		change: unknown;
 	}>();
 
 	const {
-		elements: { trigger, menu, option: optionEl, group: groupEl, groupLabel },
+		elements: { trigger, menu, option: optionEl, group: groupEl, groupLabel, label: labelEl },
 		states: { open, selected, selectedLabel }
 	} = createSelect<unknown>({
 		preventScroll,
@@ -45,7 +45,8 @@
 			dispatch('change', next?.value);
 
 			return next;
-		}
+		},
+		defaultSelected: value ? undefined : options[0]
 	});
 
 	$: selectedOption = options.find((o) => o.value === value);
@@ -78,55 +79,48 @@
 	} as FlyParams;
 </script>
 
-<button
-	class="aw-select is-colored"
-	{id}
-	class:aw-is-not-mobile={nativeMobile}
-	use:melt={$trigger}
-	aria-label="Select theme"
->
-	<div class="physical-select">
+<div>
+	<!-- svelte-ignore a11y-label-has-associated-control -->
+	<label class="block label" use:melt={$labelEl}>{label}</label>
+
+	<button use:melt={$trigger} aria-label="Select theme">
 		{#if selectedOption?.icon}
-			<span class={selectedOption.icon} aria-hidden="true" />
+			<span class="{selectedOption.icon} pointer-events-none" aria-hidden="true" />
 		{/if}
-		<span>{$selectedLabel}</span>
-	</div>
-	<span class="icon-cheveron-down" aria-hidden="true" />
-</button>
+		<span class="pointer-events-none select-none">{$selectedLabel}</span>
+
+		<div class="i-tabler-chevron-down pointer-events-none" aria-hidden="true" />
+	</button>
+</div>
 
 {#if $open}
-	<div
-		class="aw-select-menu"
-		class:aw-is-not-mobile={nativeMobile}
-		style:z-index={10000}
-		use:melt={$menu}
-		transition:fly={flyParams}
-	>
+	<div style:z-index={10000} use:melt={$menu} transition:fly={flyParams}>
 		{#each groups as group}
 			{@const isDefault = group.label === DEFAULT_GROUP}
 			{#if isDefault}
-				<div class="u-flex u-flex-vertical">
+				<div class="flex flex-col">
 					{#each group.options as option}
-						<button class="aw-select-option" use:melt={$optionEl(option)}>
+						<button use:melt={$optionEl(option)}>
 							{#if option.icon}
 								<span class={option.icon} aria-hidden="true" />
 							{/if}
-							<span style:text-transform="capitalize">{option.label}</span>
+							<span class="capitalize">{option.label}</span>
+							<div class="i-tabler-check" />
 						</button>
 					{/each}
 				</div>
 			{:else}
-				<div class="aw-select-group" use:melt={$groupEl(group.label)}>
-					<span class="aw-select-group-label" use:melt={$groupLabel(group.label)}>
+				<div use:melt={$groupEl(group.label)}>
+					<span use:melt={$groupLabel(group.label)}>
 						{group.label}
 					</span>
 
 					{#each group.options as option}
-						<button class="aw-select-option" use:melt={$optionEl(option)}>
+						<button use:melt={$optionEl(option)}>
 							{#if option.icon}
 								<span class={option.icon} aria-hidden="true" />
 							{/if}
-							<span style:text-transform="capitalize">{option.label}</span>
+							<span class="capitalize">{option.label}</span>
 						</button>
 					{/each}
 				</div>
@@ -135,38 +129,80 @@
 	</div>
 {/if}
 
-<div
-	class="aw-select is-colored aw-is-only-mobile"
-	style:display={nativeMobile ? undefined : 'none'}
->
-	{#if selectedOption?.icon}
-		<span class={selectedOption.icon} aria-hidden="true" />
-	{/if}
-	<select {id} bind:value>
-		{#each groups as group}
-			{@const isDefault = group.label === DEFAULT_GROUP}
-			{#if isDefault}
-				{#each options as option}
-					<option value={option.value} selected={option.value === value}>
-						{option.label}
-					</option>
-				{/each}
-			{:else}
-				<optgroup label={isDefault ? undefined : group.label}>
-					{#each options as option}
-						<option value={option.value} selected={option.value === value}>
-							{option.label}
-						</option>
-					{/each}
-				</optgroup>
-			{/if}
-		{/each}
-	</select>
-	<span class="icon-cheveron-down" aria-hidden="true" />
-</div>
-
 <style lang="scss">
-	.aw-select {
-		min-width: var(--min-width, var(--p-select-min-width));
+	[data-melt-select-trigger] {
+		all: unset;
+
+		@include border-gradient;
+		--p-border-radius: 0.5rem;
+		--p-border-gradient-before: linear-gradient(
+			to bottom,
+			hsl(var(--color-white-hsl) / 0.12) 0%,
+			hsl(var(--color-white-hsl) / 0) 100%
+		);
+
+		background: hsl(var(--color-white-hsl) / 0.08);
+		padding: 0.5rem;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+
+		min-width: 10rem;
+
+		transition: 150ms ease;
+
+		&:hover {
+			background: hsl(var(--color-white-hsl) / 0.12);
+		}
+
+		&:active {
+			background: hsl(var(--color-white-hsl) / 0.1);
+		}
+	}
+
+	[data-melt-select-menu] {
+		@include border-gradient;
+		--p-border-radius: 0.5rem;
+		--p-border-gradient-before: linear-gradient(
+			to bottom,
+			hsl(var(--color-white-hsl) / 0.12) 0%,
+			hsl(var(--color-white-hsl) / 0) 100%
+		);
+
+		background-color: var(--color-greyscale-850);
+		padding: 0.5rem;
+	}
+
+	[data-melt-select-option] {
+		all: unset;
+		text-align: left;
+
+		padding: 0.5rem;
+		font-size: 0.875rem;
+		border-radius: 0.3rem;
+
+		position: relative;
+
+		&:hover {
+			background-color: hsl(var(--color-greyscale-700-hsl) / 0.375);
+		}
+
+		&[data-highlighted] {
+			background-color: hsl(var(--color-greyscale-700-hsl) / 0.25);
+		}
+
+		[class*='i-'] {
+			position: absolute;
+			right: 0.5rem;
+			top: 50%;
+			translate: 0 -50%;
+			opacity: 0;
+		}
+
+		&[data-selected] [class*='i-'] {
+			opacity: 1;
+		}
 	}
 </style>

@@ -1,17 +1,42 @@
-<script>
-	import CodeMirror from '$lib/components/CodeMirror.svelte';
+<script lang="ts">
+	import CodeMirror, { type LanguagePreset } from '$lib/components/CodeMirror.svelte';
+	import Select from '$lib/components/Select.svelte';
+	import Slider from '$lib/components/Slider.svelte';
+	import type { SelectOption } from '@melt-ui/svelte';
+
+	const langOptions: SelectOption<LanguagePreset>[] = [
+		{
+			value: 'javascript',
+			label: 'Javascript'
+		},
+		{
+			value: 'html',
+			label: 'HTML'
+		}
+	];
+
+	let lang: LanguagePreset = 'javascript';
+	let fontSize = 16;
+	let scale = 1;
+
+	$: {
+		// Reset scale when lang changes, otherwise CodeMirror bugs out
+		lang;
+		scale = 1;
+	}
 </script>
 
 <main>
-	<div class="toolbar">
-		<div>
-			<label />
-		</div>
+	<div class="toolbar flex items-baseline gap-32">
+		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
+		<Select label="Language" options={langOptions} bind:value={lang} />
+		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
+		<Slider label="Scale" bind:value={scale} min={0.1} max={3} step={0.1} />
 	</div>
 
 	<div class="grid place-items-center grow w-full">
 		<div class="frame">
-			<div class="code-window">
+			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
 					<div class="square-12 bg-#EC6A5E rounded-full" />
 					<div class="square-12 bg-#F5BF4F rounded-full" />
@@ -19,6 +44,8 @@
 				</div>
 				<div class="editor mbs-16">
 					<CodeMirror
+						--p-font-size="{fontSize}px"
+						{lang}
 						value={`import { Client, Account } from "appwrite";
 const client = new Client()
 	.setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
@@ -59,10 +86,10 @@ const user = await account.create('[USER_ID]',
 	}
 
 	.toolbar {
-		@include with-border-gradient;
-		padding: 1rem;
 		width: 100%;
-		background-color: var(--color-card);
+
+		padding-block-end: 1rem;
+		border-bottom: 1px solid hsl(var(--color-white-hsl) / 0.125);
 	}
 
 	.frame {
@@ -86,6 +113,7 @@ const user = await account.create('[USER_ID]',
 			padding: 0.5rem;
 			padding-block-start: 1rem;
 			background-color: var(--color-greyscale-850);
+			scale: var(--p-scale, 1);
 
 			.editor {
 				border-radius: 1rem;
