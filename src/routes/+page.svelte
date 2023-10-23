@@ -62,12 +62,6 @@
 	let fontSize = 16;
 	let scale = 1;
 
-	$: {
-		// Reset scale when lang changes, otherwise CodeMirror bugs out
-		lang;
-		scale = 1;
-	}
-
 	let frame: HTMLElement;
 
 	let url = '';
@@ -105,7 +99,7 @@
 	<div class="toolbar flex flex-wrap items-baseline gap-16">
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
-		<Slider label="Scale" bind:value={scale} min={0.1} max={3} step={0.1} />
+		<Slider label="Scale" bind:value={scale} min={0.5} max={2} step={0.1} />
 		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
 		<Select label="Ratio" options={ratios} bind:value={ratio} --p-min-w="14rem" />
 		<Popover>

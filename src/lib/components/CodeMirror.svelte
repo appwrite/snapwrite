@@ -256,6 +256,7 @@
 			background-color: transparent;
 			color: var(--color-greyscale-500);
 			border-color: transparent;
+			min-height: 0 !important;
 		}
 
 		:global(.cm-activeLineGutter) {
