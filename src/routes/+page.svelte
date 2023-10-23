@@ -255,7 +255,7 @@ const user = await account.create('[USER_ID]',
 
 			.editor {
 				border-radius: 1rem;
-				background: linear-gradient(112deg, rgba(0, 0, 0, 0.48) 26.01%, rgba(0, 0, 0, 0.06) 94.72%);
+				background: rgba(0, 0, 0, 0.48);
 				min-height: 100px;
 				overflow: hidden;
 				padding: 2rem;
