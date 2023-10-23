@@ -23,7 +23,8 @@ export async function toImage(node: HTMLElement, format: 'svg' | 'png' | 'jpg', 
 			transformOrigin: 'top left',
 			width: `${node.offsetWidth}px`,
 			height: `${node.offsetHeight}px`,
-			borderRadius: '0'
+			borderRadius: '0',
+			marginInline: '0'
 		}
 	};
 

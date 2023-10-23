@@ -89,7 +89,6 @@
 
 	const getFrameRatio = (frame: HTMLElement | undefined) => {
 		if (!frame) return '0.00';
-		console.log(frame.getBoundingClientRect());
 		const { width, height } = frame.getBoundingClientRect();
 		return (width / height).toFixed(2);
 	};
@@ -146,32 +145,31 @@
 	</div>
 	<img src={url} alt="" srcset="" />
 
-	<div class="grow self-stretch overflow-hidden">
-		<div class="frame grow relative" bind:this={frame} style:--p-ratio={ratio}>
-			<!-- Debug Info -->
-			<div
-				class="absolute right-16 top-16 font-mono text-12 p-8 bg-black/0.25 rounded-4 z-100 hidden"
-			>
-				<p>Ratio: {ratio}</p>
-				<p>True Ratio: {trueRatio}</p>
+	<div class="grow self-stretch overflow-hidden relative">
+		<!-- Debug Info -->
+		<div
+			class="absolute right-16 top-16 font-mono text-12 p-8 bg-black/0.25 rounded-4 z-100 hidden"
+		>
+			<p>Ratio: {ratio}</p>
+			<p>True Ratio: {trueRatio}</p>
+			<br />
+
+			{#key frameRatio}
+				<p>Image Width: {frame?.getBoundingClientRect().width.toFixed(2)}</p>
+				<p>Image Height: {frame?.getBoundingClientRect().height.toFixed(2)}</p>
+				<p>Image ratio: {frameRatio}</p>
 				<br />
 
-				{#key frameRatio}
-					<p>Image Width: {frame?.getBoundingClientRect().width.toFixed(2)}</p>
-					<p>Image Height: {frame?.getBoundingClientRect().height.toFixed(2)}</p>
-					<p>Image ratio: {frameRatio}</p>
-					<br />
-
-					<div class="flex items-center gap-2">
-						<span>Fullfils ratio: </span>
-						<span
-							class="inline-block text-16
-							{trueRatio === frameRatio ? 'i-tabler-check bg-mint-500' : 'i-tabler-x bg-red-500'}"
-						/>
-					</div>
-				{/key}
-			</div>
-
+				<div class="flex items-center gap-2">
+					<span>Fullfils ratio: </span>
+					<span
+						class="inline-block text-16
+						{trueRatio === frameRatio ? 'i-tabler-check bg-mint-500' : 'i-tabler-x bg-red-500'}"
+					/>
+				</div>
+			{/key}
+		</div>
+		<div class="frame grow relative" bind:this={frame} style:--p-ratio={ratio}>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
 					<div class="square-12 bg-#EC6A5E rounded-full" />
@@ -240,13 +238,13 @@ const user = await account.create('[USER_ID]',
 
 		max-width: 100%;
 		max-height: 100%;
-		margin-inline: auto;
 
 		padding: 1rem;
 		align-self: center;
 
 		display: grid;
 		place-items: center;
+		margin-inline: auto;
 
 		overflow: hidden;
 
