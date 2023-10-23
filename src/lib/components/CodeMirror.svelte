@@ -74,9 +74,14 @@
 		syntaxHighlighting(
 			HighlightStyle.define([
 				{ tag: tags.moduleKeyword, color: 'var(--color-accent)' },
+				{
+					tag: [tags.function(tags.variableName), tags.function(tags.propertyName)],
+					color: '#67A3FE'
+				},
 				{ tag: [tags.keyword, tags.tagName], color: '#FE9567' },
+				{ tag: tags.escape, color: '#67A3FE' },
 				{ tag: tags.comment, color: '#6E6E71' },
-				{ tag: tags.propertyName, color: '#67A3FE' },
+				{ tag: tags.propertyName, color: 'var(--color-mint-500)' },
 				{ tag: tags.string, color: '#4AD4AB' }
 			])
 		),
@@ -86,6 +91,9 @@
 
 	$: view && update(value);
 	$: view && state_extensions && reconfigure();
+
+	const obj = { a: 1, b: { c() {} } };
+	obj.b.c();
 
 	onMount(() => (view = create_editor_view()));
 	onDestroy(() => view?.destroy());
