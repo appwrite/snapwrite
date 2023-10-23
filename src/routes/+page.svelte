@@ -5,6 +5,7 @@
 	import Slider from '$lib/components/Slider.svelte';
 	import { save, toImage } from '$lib/utils/toImage';
 	import { melt, type SelectOption } from '@melt-ui/svelte';
+	import { tick } from 'svelte';
 
 	const langOptions: SelectOption<LanguagePreset>[] = [
 		{
@@ -74,9 +75,30 @@
 		return async () => {
 			const dataUrl = await toImage(frame, format, size);
 
-			// save(dataUrl);
-			url = dataUrl;
+			save(dataUrl);
+			// url = dataUrl;
 		};
+	}
+
+	$: trueRatio = (() => {
+		const [w, h] = ratio.split('/').map(Number);
+		return (w / (h ?? 1)).toFixed(2);
+	})();
+
+	let frameRatio = '1.00';
+
+	const getFrameRatio = (frame: HTMLElement | undefined) => {
+		if (!frame) return '0.00';
+		console.log(frame.getBoundingClientRect());
+		const { width, height } = frame.getBoundingClientRect();
+		return (width / height).toFixed(2);
+	};
+
+	$: {
+		ratio;
+		tick().then(() => {
+			frameRatio = getFrameRatio(frame);
+		});
 	}
 </script>
 
@@ -124,18 +146,43 @@
 	</div>
 	<img src={url} alt="" srcset="" />
 
-	<div class="frame grow" bind:this={frame} style:--p-ratio={ratio}>
-		<div class="code-window" style:--p-scale={scale}>
-			<div class="flex gap-8 mis-8">
-				<div class="square-12 bg-#EC6A5E rounded-full" />
-				<div class="square-12 bg-#F5BF4F rounded-full" />
-				<div class="square-12 bg-#61C554 rounded-full" />
+	<div class="grow self-stretch overflow-hidden">
+		<div class="frame grow relative" bind:this={frame} style:--p-ratio={ratio}>
+			<!-- Debug Info -->
+			<div
+				class="absolute right-16 top-16 font-mono text-12 p-8 bg-black/0.25 rounded-4 z-100 hidden"
+			>
+				<p>Ratio: {ratio}</p>
+				<p>True Ratio: {trueRatio}</p>
+				<br />
+
+				{#key frameRatio}
+					<p>Image Width: {frame?.getBoundingClientRect().width.toFixed(2)}</p>
+					<p>Image Height: {frame?.getBoundingClientRect().height.toFixed(2)}</p>
+					<p>Image ratio: {frameRatio}</p>
+					<br />
+
+					<div class="flex items-center gap-2">
+						<span>Fullfils ratio: </span>
+						<span
+							class="inline-block text-16
+							{trueRatio === frameRatio ? 'i-tabler-check bg-mint-500' : 'i-tabler-x bg-red-500'}"
+						/>
+					</div>
+				{/key}
 			</div>
-			<div class="editor mbs-16">
-				<CodeMirror
-					--p-font-size="{fontSize}px"
-					{lang}
-					value={`import { Client, Account } from "appwrite";
+
+			<div class="code-window" style:--p-scale={scale}>
+				<div class="flex gap-8 mis-8">
+					<div class="square-12 bg-#EC6A5E rounded-full" />
+					<div class="square-12 bg-#F5BF4F rounded-full" />
+					<div class="square-12 bg-#61C554 rounded-full" />
+				</div>
+				<div class="editor mbs-16">
+					<CodeMirror
+						--p-font-size="{fontSize}px"
+						{lang}
+						value={`import { Client, Account } from "appwrite";
 const client = new Client()
   .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
   .setProject('<PROJECT_ID>');                 // Your project ID
@@ -144,7 +191,8 @@ const account = new Account(client);
 	
 const user = await account.create('[USER_ID]', 
 'email@example.com', 'password');`}
-				/>
+					/>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -50,7 +50,14 @@ const spacingUtilities: Rule[] = [
 	['min-w', 'min-width'],
 	['min-h', 'min-height'],
 	['square', 'width', 'height'],
-	['gap', 'gap']
+	['gap', 'gap'],
+	['right', 'right'],
+	['left', 'left'],
+	['top', 'top'],
+	['bottom', 'bottom'],
+	['inset', 'inset'],
+	['text', 'font-size'],
+	['rounded', 'border-radius']
 ].map(([prefix, ...properties]) => [
 	new RegExp(`^${prefix}-(\\d+)$`),
 	((match) => {
@@ -61,7 +68,23 @@ const spacingUtilities: Rule[] = [
 	}) as DynamicMatcher
 ]);
 
+const fontFamilyUtilities: Rule[] = [
+	['sans', 'var(--ff-sans)'],
+	['mono', 'var(--ff-mono)']
+].map(([prefix, value]) => [
+	new RegExp(`^font-${prefix}$`),
+	(() => {
+		return { 'font-family': value };
+	}) as DynamicMatcher
+]);
+
 export default defineConfig({
 	presets: [presetUno(), presetIcons()],
-	rules: [...colorUtilities, ...spacingUtilities]
+	rules: [...colorUtilities, ...spacingUtilities, ...fontFamilyUtilities],
+	theme: {
+		fontFamily: {
+			sans: 'var(--ff-sans);',
+			mono: 'var(--ff-mono);'
+		}
+	}
 });
