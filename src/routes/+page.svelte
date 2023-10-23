@@ -3,6 +3,7 @@
 	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
+	import { IS_DEV } from '$lib/constants';
 	import { save, toImage } from '$lib/utils/toImage';
 	import { melt, type SelectOption } from '@melt-ui/svelte';
 	import { tick } from 'svelte';
@@ -142,7 +143,8 @@
 	<div class="grow self-stretch overflow-hidden relative">
 		<!-- Debug Info -->
 		<div
-			class="absolute right-16 top-16 font-mono text-12 p-8 bg-black/0.25 rounded-4 z-100 hidden"
+			class="absolute right-16 top-16 font-mono text-12 p-8 bg-black/0.25 rounded-4 z-1"
+			class:hidden={!IS_DEV}
 		>
 			<p>Ratio: {ratio}</p>
 			<p>True Ratio: {trueRatio}</p>
@@ -155,7 +157,7 @@
 				<br />
 
 				<div class="flex items-center gap-2">
-					<span>Fullfils ratio: </span>
+					<span>Fulfils ratio: </span>
 					<span
 						class="inline-block text-16
 						{trueRatio === frameRatio ? 'i-tabler-check bg-mint-500' : 'i-tabler-x bg-red-500'}"

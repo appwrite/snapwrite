@@ -13,7 +13,7 @@
 <slot name="trigger" trigger={$trigger} />
 
 {#if $open}
-	<div use:melt={$content} transition:fly={{ duration: 150, y: -2 }}>
+	<div class="z-100" use:melt={$content} transition:fly={{ duration: 150, y: -2 }}>
 		<slot />
 	</div>
 {/if}
