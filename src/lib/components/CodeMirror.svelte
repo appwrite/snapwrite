@@ -247,6 +247,11 @@
 
 	.codemirror-wrapper {
 		font-size: var(--p-font-size, 16px);
+
+		:global(*) {
+			font-family: 'Fira Code', monospace !important;
+		}
+
 		:global(.cm-gutters) {
 			background-color: transparent;
 			color: var(--color-greyscale-500);

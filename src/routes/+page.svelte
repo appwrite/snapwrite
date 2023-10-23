@@ -74,8 +74,8 @@
 		return async () => {
 			const dataUrl = await toImage(frame, format, size);
 
-			save(dataUrl);
-			// url = dataUrl;
+			// save(dataUrl);
+			url = dataUrl;
 		};
 	}
 </script>
@@ -124,19 +124,18 @@
 	</div>
 	<img src={url} alt="" srcset="" />
 
-	<div class="relative grow self-stretch overflow-hidden">
-		<div class="frame grow" bind:this={frame} style:--p-ratio={ratio}>
-			<div class="code-window" style:--p-scale={scale}>
-				<div class="flex gap-8 mis-8">
-					<div class="square-12 bg-#EC6A5E rounded-full" />
-					<div class="square-12 bg-#F5BF4F rounded-full" />
-					<div class="square-12 bg-#61C554 rounded-full" />
-				</div>
-				<div class="editor mbs-16">
-					<CodeMirror
-						--p-font-size="{fontSize}px"
-						{lang}
-						value={`import { Client, Account } from "appwrite";
+	<div class="frame grow" bind:this={frame} style:--p-ratio={ratio}>
+		<div class="code-window" style:--p-scale={scale}>
+			<div class="flex gap-8 mis-8">
+				<div class="square-12 bg-#EC6A5E rounded-full" />
+				<div class="square-12 bg-#F5BF4F rounded-full" />
+				<div class="square-12 bg-#61C554 rounded-full" />
+			</div>
+			<div class="editor mbs-16">
+				<CodeMirror
+					--p-font-size="{fontSize}px"
+					{lang}
+					value={`import { Client, Account } from "appwrite";
 const client = new Client()
   .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
   .setProject('<PROJECT_ID>');                 // Your project ID
@@ -145,8 +144,7 @@ const account = new Account(client);
 	
 const user = await account.create('[USER_ID]', 
 'email@example.com', 'password');`}
-					/>
-				</div>
+				/>
 			</div>
 		</div>
 	</div>
@@ -169,7 +167,6 @@ const user = await account.create('[USER_ID]',
 		align-items: center;
 		gap: 1rem;
 		height: 100vh;
-		overflow: hidden;
 
 		padding: 1rem;
 		margin-inline: auto;
