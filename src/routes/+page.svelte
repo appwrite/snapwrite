@@ -64,14 +64,20 @@
 	let scale = 1;
 
 	let frame: HTMLElement;
+	let capturing = false;
 
 	let url = '';
 	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
 		return async () => {
+			if (capturing) return;
+			capturing = true;
+
 			const dataUrl = await toImage(frame, format, size);
 
 			save(dataUrl);
 			// url = dataUrl;
+
+			capturing = false;
 		};
 	}
 
@@ -165,7 +171,12 @@
 				</div>
 			{/key}
 		</div>
-		<div class="frame grow relative" bind:this={frame} style:--p-ratio={ratio}>
+		<div
+			class="frame grow relative"
+			bind:this={frame}
+			style:--p-ratio={ratio}
+			style:--p-resize={capturing ? 'none' : 'both'}
+		>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
 					<div class="square-12 bg-#EC6A5E rounded-full" />
@@ -246,7 +257,7 @@ const user = await account.create('[USER_ID]',
 
 		.code-window {
 			@include with-border-gradient;
-			min-width: 500px;
+			// min-width: 500px;
 
 			padding: 0.5rem;
 			padding-block-start: 1rem;
@@ -259,6 +270,8 @@ const user = await account.create('[USER_ID]',
 				min-height: 100px;
 				overflow: hidden;
 				padding: 2rem;
+
+				resize: var(--p-resize);
 			}
 		}
 	}
