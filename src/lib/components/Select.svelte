@@ -39,7 +39,7 @@
 		forceVisible: true,
 		onSelectedChange({ curr, next }) {
 			if (onSelectedChange) {
-				onSelectedChange({ curr, next });
+				next = onSelectedChange({ curr, next });
 			}
 			value = next?.value;
 			dispatch('change', next?.value);

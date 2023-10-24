@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CodeMirror, { type LanguagePreset } from '$lib/components/CodeMirror.svelte';
+	import ImageInput from '$lib/components/ImageInput.svelte';
 	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
@@ -7,7 +8,9 @@
 	import { save, toImage } from '$lib/utils/toImage';
 	import { melt, type SelectOption } from '@melt-ui/svelte';
 	import { tick } from 'svelte';
+	import { fly } from 'svelte/transition';
 
+	// Options
 	const langOptions: SelectOption<LanguagePreset>[] = [
 		{
 			value: 'typescript',
@@ -63,24 +66,15 @@
 	let fontSize = 16;
 	let scale = 1;
 
-	let frame: HTMLElement;
-	let capturing = false;
+	const bgOptions: SelectOption<string>[] = [
+		{ label: 'BG Dark 1', value: 'bg-1.png' },
+		{ label: 'Custom', value: 'custom' }
+	];
 
-	let url = '';
-	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
-		return async () => {
-			if (capturing) return;
-			capturing = true;
+	let bg = bgOptions[1].value;
+	let customBg: string | null = null;
 
-			const dataUrl = await toImage(frame, format, size);
-
-			save(dataUrl);
-			// url = dataUrl;
-
-			capturing = false;
-		};
-	}
-
+	// Debug Info
 	$: trueRatio = (() => {
 		const [w, h] = ratio.split('/').map(Number);
 		return (w / (h ?? 1)).toFixed(2);
@@ -100,6 +94,24 @@
 			frameRatio = getFrameRatio(frame);
 		});
 	}
+
+	// Exporter
+	let frame: HTMLElement;
+	let capturing = false;
+	let url = '';
+	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
+		return async () => {
+			if (capturing) return;
+			capturing = true;
+
+			const dataUrl = await toImage(frame, format, size);
+
+			save(dataUrl);
+			// url = dataUrl;
+
+			capturing = false;
+		};
+	}
 </script>
 
 <main>
@@ -107,8 +119,16 @@
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
 		<Slider label="Scale" bind:value={scale} min={0.5} max={2} step={0.1} />
-		<Select label="Background Image" options={[{ label: 'BG Dark 1', value: 'bg-1.png' }]} />
 		<Select label="Ratio" options={ratios} bind:value={ratio} --p-min-w="14rem" />
+
+		<Select label="Background Image" options={bgOptions} bind:value={bg} />
+
+		{#if bg === 'custom'}
+			<div class="self-end" transition:fly={{ duration: 150, y: 4 }}>
+				<ImageInput bind:value={customBg} />
+			</div>
+		{/if}
+
 		<Popover>
 			<button
 				slot="trigger"
@@ -176,6 +196,7 @@
 			bind:this={frame}
 			style:--p-ratio={ratio}
 			style:--p-resize={capturing ? 'none' : 'both'}
+			style:--p-bg="url({bg === 'custom' ? customBg : `/images/${bg}`})"
 		>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
@@ -235,7 +256,7 @@ const user = await account.create('[USER_ID]',
 	}
 
 	.frame {
-		background: url('/images/bg-1.png');
+		background: var(--p-bg, url('/images/bg-1.png'));
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
