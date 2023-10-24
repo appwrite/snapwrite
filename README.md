@@ -1,38 +1,44 @@
-# create-svelte
+# Snapwrite 🖥️
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+[![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
+[![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
+[![appwrite.io](https://img.shields.io/badge/appwrite-.io-f02e65?style=flat-square)](https://appwrite.io)
 
-## Creating a project
+![Cover banner](https://raw.githubusercontent.com/appwrite/.github/main/profile/images/banner.png)
 
-If you're seeing this, you've probably already done this step. Congrats!
+Snapwrite is a tool to convert code snippets into beautiful Appwrite-themed social-media images.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Snapwrite has been built with the following frameworks:
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+- [Svelte](https://svelte.dev/)
+- [SvelteKit](https://kit.svelte.dev/)
 
-## Developing
+## Development
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+_If this is your first time setting up the repository, please run `pnpm install` inside the repo's directory._
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+To get the repo up and running in your local environment, use the following command:
 
 ```bash
-npm run build
+pnpm run dev
 ```
 
-You can preview the production build with `npm run preview`.
+> If you don't have `pnpm` available on your system, you can install it from the [official pnpm Installation website](https://pnpm.io/installation)
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Contributing
+
+All code contributions, including those of people with commit access, must go through a pull request and be approved by a core developer before being merged. This is to ensure a proper review of all the code.
+
+We truly ❤️ pull requests! If you wish to help, you can learn more about how you can contribute to this project in the [contribution guide](./CONTRIBUTING.md).
+
+## Security
+
+For security issues, kindly email us at [security@appwrite.io](mailto:security@appwrite.io) instead of posting a public issue on GitHub.
+
+## Follow Us
+
+Join our growing community around the world! See our official [Blog](https://medium.com/appwrite-io). Follow us on [Twitter](https://twitter.com/appwrite), [Facebook Page](https://www.facebook.com/appwrite.io), [Facebook Group](https://www.facebook.com/groups/appwrite.developers/), and [Dev Community](https://dev.to/appwrite) or join our live [Discord server](https://appwrite.io/discord) for more help, ideas, and discussions.
+
+## License
+
+Snapwrite © 2023 by Appwrite is licensed under the [MIT License](./LICENSE).
