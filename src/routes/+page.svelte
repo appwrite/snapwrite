@@ -71,7 +71,7 @@
 		{ label: 'Custom', value: 'custom' }
 	];
 
-	let bg = bgOptions[1].value;
+	let bg = bgOptions[0].value;
 	let customBg: string | null = null;
 
 	// Debug Info
@@ -210,8 +210,8 @@
 						{lang}
 						value={`import { Client, Account } from "appwrite";
 const client = new Client()
-  .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-  .setProject('<PROJECT_ID>');                 // Your project ID
+  .setEndpoint('https://cloud.appwrite.io/v1')
+  .setProject('<PROJECT_ID>');                
 	
 const account = new Account(client);
 	
