@@ -115,7 +115,7 @@
 </script>
 
 <main>
-	<div class="toolbar flex flex-wrap items-baseline gap-16">
+	<div class="toolbar">
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
 		<Slider label="Scale" bind:value={scale} min={0.5} max={2} step={0.1} />
@@ -130,11 +130,8 @@
 		{/if}
 
 		<Popover>
-			<button
-				slot="trigger"
-				let:trigger
-				class="button is-secondary mis-auto self-center"
-				use:melt={trigger}>Export</button
+			<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}
+				>Export</button
 			>
 
 			<div class="exporter p-16">
@@ -237,7 +234,7 @@ const user = await account.create('[USER_ID]',
 
 	main {
 		display: flex;
-		flex-direction: column;
+
 		align-items: center;
 		gap: 1rem;
 		height: 100vh;
@@ -246,13 +243,36 @@ const user = await account.create('[USER_ID]',
 		margin-inline: auto;
 		min-width: 900px;
 		max-width: 1440px;
+
+		position: relative;
 	}
 
 	.toolbar {
-		width: 100%;
+		@include with-border-gradient;
+		--p-border-radius: 0rem;
 
-		padding-block-end: 1rem;
-		border-bottom: 1px solid hsl(var(--color-white-hsl) / 0.125);
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		align-items: stretch;
+		gap: 1rem;
+
+		position: fixed;
+		z-index: 100;
+		left: 0;
+		top: 0;
+		padding: 1.5rem;
+		--p-margin: 0rem;
+		height: calc(100% - var(--p-margin) * 2);
+		width: 20rem;
+
+		background-color: hsl(var(--color-greyscale-900-hsl) / 1);
+
+		opacity: 0.25;
+
+		&:hover {
+			opacity: 1;
+		}
 	}
 
 	.frame {
