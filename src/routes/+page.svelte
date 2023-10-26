@@ -9,6 +9,7 @@
 	import { melt, type SelectOption } from '@melt-ui/svelte';
 	import { tick } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import RegenerateGradientButton from '$lib/components/RegenerateGradientButton.svelte';
 
 	// Options
 	const langOptions: SelectOption<LanguagePreset>[] = [
@@ -59,6 +60,10 @@
 		{
 			label: 'Stories (IG, LinkedIn)',
 			value: '1080/1920'
+		},
+		{
+			label: 'LinkedIn Banner',
+			value: '1584/396'
 		}
 	];
 	let ratio = ratios[0].value;
@@ -68,11 +73,13 @@
 
 	const bgOptions: SelectOption<string>[] = [
 		{ label: 'BG Dark 1', value: 'bg-1.png' },
-		{ label: 'Custom', value: 'custom' }
+		{ label: 'Custom', value: 'custom' },
+		{ label: 'Random Mesh Gradient', value: 'random_mesh_gradient' },
 	];
 
 	let bg = bgOptions[1].value;
 	let customBg: string | null = null;
+	let randomGradientValue: string | null = null;
 
 	// Debug Info
 	$: trueRatio = (() => {
@@ -129,7 +136,13 @@
 			</div>
 		{/if}
 
-		<Popover>
+		{#if bg === 'random_mesh_gradient'}
+			<div class="self-end" transition:fly={{ duration: 150, y: 4 }}>
+				<RegenerateGradientButton bind:value={randomGradientValue} />
+			</div>
+		{/if}
+
+		<Popover> 	
 			<button
 				slot="trigger"
 				let:trigger
@@ -197,6 +210,7 @@
 			style:--p-ratio={ratio}
 			style:--p-resize={capturing ? 'none' : 'both'}
 			style:--p-bg="url({bg === 'custom' ? customBg : `/images/${bg}`})"
+			style={bg === 'random_mesh_gradient' ? randomGradientValue : null}
 		>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
