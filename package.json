@@ -36,6 +36,7 @@
 		"eslint": "^8.51.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte": "^2.34.0",
+		"meshgrad": "^0.0.15",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.10.1",
 		"sass": "^1.69.4",
