@@ -4,6 +4,7 @@
 	import Popover from '$lib/components/Popover.svelte';
 	import Select from '$lib/components/Select.svelte';
 	import Slider from '$lib/components/Slider.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { IS_DEV } from '$lib/constants';
 	import { save, toImage } from '$lib/utils/toImage';
 	import { melt, type SelectOption } from '@melt-ui/svelte';
@@ -112,22 +113,26 @@
 			capturing = false;
 		};
 	}
+
+	let hideSidebar = false;
 </script>
 
 <main>
-	<div class="toolbar">
+	<div class="toolbar" data-hide={hideSidebar}>
 		<Select label="Language" options={langOptions} bind:value={lang} />
 		<Slider label="Font Size" bind:value={fontSize} min={8} max={32} />
 		<Slider label="Scale" bind:value={scale} min={0.5} max={2} step={0.1} />
 		<Select label="Ratio" options={ratios} bind:value={ratio} --p-min-w="14rem" />
 
-		<Select label="Background Image" options={bgOptions} bind:value={bg} />
+		<div class="flex items-center gap-4">
+			<Select label="Background Image" options={bgOptions} bind:value={bg} />
 
-		{#if bg === 'custom'}
-			<div class="self-end" transition:fly={{ duration: 150, y: 4 }}>
-				<ImageInput bind:value={customBg} />
-			</div>
-		{/if}
+			{#if bg === 'custom'}
+				<div class="self-end" transition:fly={{ duration: 150, y: 4 }}>
+					<ImageInput bind:value={customBg} />
+				</div>
+			{/if}
+		</div>
 
 		<Popover>
 			<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}
@@ -160,7 +165,21 @@
 				</div>
 			</div>
 		</Popover>
+
+		<Tooltip>
+			<button
+				slot="asChild"
+				let:trigger
+				use:melt={trigger}
+				class="button !absolute right-0 translate-x-1/2 top-1/2 -translate-y-1/2 !p-10"
+				on:click={() => (hideSidebar = !hideSidebar)}
+			>
+				<div class="i-tabler-chevron-left transition duration-200" class:rotate-180={hideSidebar} />
+			</button>
+			<p slot="tooltip">{hideSidebar ? 'Expand' : 'Collapse'} Sidebar</p>
+		</Tooltip>
 	</div>
+
 	<img src={url} alt="" srcset="" />
 
 	<div class="grow self-stretch overflow-hidden relative">
@@ -268,10 +287,10 @@ const user = await account.create('[USER_ID]',
 
 		background-color: hsl(var(--color-greyscale-900-hsl) / 1);
 
-		opacity: 0.25;
+		transition: 150ms ease;
 
-		&:hover {
-			opacity: 1;
+		&[data-hide='true'] {
+			translate: -18rem;
 		}
 	}
 

@@ -139,7 +139,7 @@
 			hsl(var(--color-white-hsl) / 0) 100%
 		);
 
-		background: hsl(var(--color-white-hsl) / 0.08);
+		background-color: var(--color-greyscale-800);
 		padding: 0.5rem;
 		cursor: pointer;
 		display: flex;
@@ -152,11 +152,11 @@
 		transition: 150ms ease;
 
 		&:hover {
-			background: hsl(var(--color-white-hsl) / 0.12);
+			background-color: hsl(var(--color-greyscale-800-hsl) / 0.75);
 		}
 
 		&:active {
-			background: hsl(var(--color-white-hsl) / 0.1);
+			background-color: hsl(var(--color-greyscale-800-hsl) / 0.5);
 		}
 	}
 

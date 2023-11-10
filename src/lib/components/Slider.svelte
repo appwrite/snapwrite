@@ -30,7 +30,7 @@
 		<span class="label">{value}</span>
 	</div>
 
-	<span use:melt={$root} class="relative flex h-20px w-200px items-center">
+	<span use:melt={$root} class="relative flex h-20px w-full items-center">
 		<span class="block h-3px w-full bg-black">
 			<span use:melt={$range} class="h-3px bg-white" />
 		</span>
