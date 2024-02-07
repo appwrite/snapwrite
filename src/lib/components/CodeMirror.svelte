@@ -1,4 +1,14 @@
 <script lang="ts" context="module">
+	import { javascript } from '@codemirror/lang-javascript';
+	import { html } from '@codemirror/lang-html';
+	import { css } from '@codemirror/lang-css';
+	import { python } from '@codemirror/lang-python';
+	import { php } from '@codemirror/lang-php';
+	import { StreamLanguage } from '@codemirror/language';
+	import { kotlin } from '@codemirror/legacy-modes/mode/clike';
+	import { ruby } from '@codemirror/legacy-modes/mode/ruby';
+	import { swift } from '@codemirror/legacy-modes/mode/swift';
+
 	export type ThemeSpec = Record<string, StyleSpec>;
 	export type StyleSpec = {
 		[propOrSelector: string]: string | number | StyleSpec | null;
@@ -6,10 +16,18 @@
 
 	type LanguageConfig = {
 		label: string;
-		highlighter: () => LanguageSupport;
+		highlighter: () => LanguageSupport | StreamLanguage<unknown>;
 	};
 
 	export const languagePresets = {
+		html: {
+			label: 'HTML',
+			highlighter: html
+		},
+		css: {
+			label: 'CSS',
+			highlighter: css
+		},
 		javascript: {
 			label: 'Javascript',
 			highlighter: javascript
@@ -26,13 +44,9 @@
 			label: 'TSX',
 			highlighter: () => javascript({ jsx: true, typescript: true })
 		},
-		html: {
-			label: 'HTML',
-			highlighter: html
-		},
-		css: {
-			label: 'CSS',
-			highlighter: css
+		kotlin: {
+			label: 'Kotlin',
+			highlighter: () => StreamLanguage.define(kotlin)
 		},
 		python: {
 			label: 'Python',
@@ -41,6 +55,14 @@
 		php: {
 			label: 'PHP',
 			highlighter: php
+		},
+		ruby: {
+			label: 'Ruby',
+			highlighter: () => StreamLanguage.define(ruby)
+		},
+		swift: {
+			label: 'Swift',
+			highlighter: () => StreamLanguage.define(swift)
 		}
 	} as const satisfies Record<string, LanguageConfig>;
 	export type LanguagePreset = keyof typeof languagePresets;
@@ -59,11 +81,6 @@
 		type LanguageSupport
 	} from '@codemirror/language';
 	import { debounce } from '$lib/utils/debounce.js';
-	import { javascript } from '@codemirror/lang-javascript';
-	import { html } from '@codemirror/lang-html';
-	import { css } from '@codemirror/lang-css';
-	import { python } from '@codemirror/lang-python';
-	import { php } from '@codemirror/lang-php';
 	import { tags } from '@lezer/highlight';
 
 	let classes = '';
@@ -102,7 +119,8 @@
 			placeholder,
 			editable,
 			readonly,
-			languagePresets[lang ?? 'javascript']?.highlighter()
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			languagePresets[lang ?? 'javascript']?.highlighter() as any
 		),
 		syntaxHighlighting(
 			HighlightStyle.define([
