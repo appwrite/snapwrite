@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export type SelectOption<T = unknown> = {
+	export type ComboboxOption<T = unknown> = {
 		value: T;
 		label?: string;
 		icon?: string;
@@ -8,12 +8,12 @@
 </script>
 
 <script lang="ts">
-	import { createSelect, melt, type CreateSelectProps } from '@melt-ui/svelte';
+	import { createCombobox, melt, type CreateSelectProps } from '@melt-ui/svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { fly, type FlyParams } from 'svelte/transition';
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	export let options: Array<SelectOption<any>>;
+	export let options: Array<ComboboxOption<any>>;
 
 	export let value: unknown | undefined = undefined;
 	export let onSelectedChange: CreateSelectProps['onSelectedChange'] = undefined;
@@ -27,9 +27,9 @@
 	}>();
 
 	const {
-		elements: { trigger, menu, option: optionEl, group: groupEl, groupLabel, label: labelEl },
-		states: { open, selected, selectedLabel }
-	} = createSelect<unknown>({
+		elements: { input, menu, option: optionEl, group: groupEl, groupLabel, label: labelEl },
+		states: { open, selected, inputValue, touchedInput }
+	} = createCombobox<unknown>({
 		preventScroll,
 		positioning: {
 			sameWidth: true,
@@ -55,13 +55,21 @@
 		selected.set(selectedOption);
 	}
 
+	$: if (!$open) {
+		$inputValue = $selected?.label ?? '';
+	}
+
 	const DEFAULT_GROUP = 'default';
 	type Group = {
 		label: string;
-		options: SelectOption<unknown>[];
+		options: ComboboxOption<unknown>[];
 	};
 	$: groups = (function getGroups(): Group[] {
-		const groups = options.reduce<Record<string, SelectOption[]>>((carry, option) => {
+		const groups = options.reduce<Record<string, ComboboxOption[]>>((carry, option) => {
+			if ($touchedInput && !option.label?.toLowerCase().includes($inputValue.toLowerCase() ?? '')) {
+				return carry;
+			}
+
 			const group = option.group ?? DEFAULT_GROUP;
 			if (!carry[group]) {
 				carry[group] = [];
@@ -83,14 +91,13 @@
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="block label" use:melt={$labelEl}>{label}</label>
 
-	<button use:melt={$trigger}>
-		{#if selectedOption?.icon}
-			<span class="{selectedOption.icon} pointer-events-none" aria-hidden="true" />
-		{/if}
-		<span class="pointer-events-none select-none">{$selectedLabel}</span>
-
-		<div class="i-tabler-chevron-down pointer-events-none" aria-hidden="true" />
-	</button>
+	<div class="relative w-fit">
+		<input use:melt={$input} />
+		<div
+			class="i-tabler-chevron-down absolute right-8 top-1/2 z-10 -translate-y-1/2 pointer-events-none"
+			aria-hidden="true"
+		/>
+	</div>
 </div>
 
 {#if $open}
@@ -130,22 +137,18 @@
 {/if}
 
 <style lang="scss">
-	[data-melt-select-trigger] {
-		@include border-gradient;
-		--p-border-radius: 0.5rem;
-		--p-border-gradient-before: linear-gradient(
-			to bottom,
-			hsl(var(--color-white-hsl) / 0.12) 0%,
-			hsl(var(--color-white-hsl) / 0) 100%
-		);
-
+	[data-melt-combobox-input] {
 		background-color: var(--color-greyscale-800);
-		padding: 0.5rem;
+		border: 1px solid var(--color-offset);
+		border-radius: 0.5rem;
+		padding: 0.6rem 0.5rem;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.5rem;
+
+		font-size: 1rem;
 
 		min-width: var(--p-min-w, 10rem);
 
@@ -153,14 +156,20 @@
 
 		&:hover {
 			background-color: hsl(var(--color-greyscale-800-hsl) / 0.75);
+			/* border-color: var(--color-primary); */
 		}
 
 		&:active {
 			background-color: hsl(var(--color-greyscale-800-hsl) / 0.5);
+			/* border-color: var(--color-primary); */
+		}
+
+		&:focus {
+			border-color: hsl(var(--color-pink-500-hsl) / 0.5);
 		}
 	}
 
-	[data-melt-select-menu] {
+	[data-melt-combobox-menu] {
 		@include border-gradient;
 		--p-border-radius: 0.5rem;
 		--p-border-gradient-before: linear-gradient(
@@ -173,7 +182,7 @@
 		padding: 0.5rem;
 	}
 
-	[data-melt-select-option] {
+	[data-melt-combobox-option] {
 		all: unset;
 		text-align: left;
 

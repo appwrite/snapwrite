@@ -38,3 +38,10 @@ body {
 	padding: 0;
 	margin: 0;
 }
+
+// Reset input
+input {
+	border: none;
+	outline: none;
+	color: var(--color-primary);
+}
