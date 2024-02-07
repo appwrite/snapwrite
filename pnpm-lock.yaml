@@ -115,6 +115,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.5.2
     version: 3.5.2(postcss@8.4.31)(sass@1.69.4)(svelte@4.2.10)
+  svelte-sonner:
+    specifier: ^0.3.13
+    version: 0.3.13(svelte@4.2.10)
   tslib:
     specifier: ^2.6.2
     version: 2.6.2
@@ -2582,6 +2585,14 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.10
       typescript: 5.2.2
+    dev: true
+
+  /svelte-sonner@0.3.13(svelte@4.2.10):
+    resolution: {integrity: sha512-d6qWfY3aVh5+zGK+33u4paGxa74NCXIP7mOwh9fRYLA4Io/FquA3Iy/CJyj6PgkYHF8bruHsl+2Tkg6qVfqPOA==}
+    peerDependencies:
+      svelte: '>=3 <5'
+    dependencies:
+      svelte: 4.2.10
     dev: true
 
   /svelte@4.2.10:

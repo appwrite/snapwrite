@@ -14,6 +14,7 @@
 	import { melt, type SelectOption } from '@melt-ui/svelte';
 	import { tick } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import { toast } from 'svelte-sonner';
 
 	// Options
 	const langOptions = Object.entries(languagePresets).map(([key, { label }]) => ({
@@ -98,22 +99,45 @@
 	};
 
 	function exporter({ format, size = 1, copy = false }: ExporterArgs) {
-		return async () => {
+		return () => {
 			if (capturing) return;
-			capturing = true;
+			const promise = new Promise((resolve, reject) => {
+				(async () => {
+					try {
+						if (capturing) {
+							throw new Error('Already capturing');
+						}
+						capturing = true;
 
-			const { dataUrl } = await toImage(frame, format, size);
+						const { dataUrl } = await toImage(frame, format, size);
 
-			if (copy) {
-				const blob = await fetch(dataUrl).then((res) => res.blob());
-				const item = new ClipboardItem({ [blob.type]: blob });
-				navigator.clipboard.write([item]);
-			} else {
-				save(dataUrl);
-			}
-			// url = dataUrl;
+						if (copy) {
+							const blob = await fetch(dataUrl).then((res) => res.blob());
+							console.log(blob.type);
+							const item = new ClipboardItem({ [blob.type]: blob });
+							navigator.clipboard.write([item]);
+						} else {
+							save(dataUrl);
+						}
 
-			capturing = false;
+						resolve(dataUrl);
+					} catch (err) {
+						reject(err);
+					} finally {
+						capturing = false;
+					}
+				})();
+			});
+
+			toast.promise(promise, {
+				loading: 'Loading...',
+				success: copy ? 'Copied!' : 'Downloaded!',
+				error: 'Failed to export. Please try again.'
+			});
+			// toast.promise(p(), {
+			// 	success: copy ? 'Copied!' : 'Downloaded!',
+			// 	error: 'Failed to export. Please try again.'
+			// });
 		};
 	}
 
@@ -144,20 +168,20 @@
 			<div class="flex items-center gap-8">
 				{#each ['Export', 'Copy'] as act}
 					<Popover>
-						<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}
-							>{act}</button
-						>
+						<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}>
+							{act}
+						</button>
 
 						<div class="exporter p-16">
 							<div class="flex flex-col gap-16">
-								<div class="flex justify-between items-center">
-									<span class="font-500">SVG</span>
+								{#if act === 'Export'}
+									<div class="flex justify-between items-center">
+										<span class="font-500">SVG</span>
 
-									<button
-										class="rounded-4"
-										on:click={exporter({ copy: act === 'Copy', format: 'svg' })}>1x</button
-									>
-								</div>
+										<button class="rounded-4" on:click={exporter({ format: 'svg' })}>1x</button>
+									</div>
+								{/if}
+
 								<div class="flex justify-between items-center">
 									<span class="font-500">PNG</span>
 									<div class="flex gap-2">
@@ -175,23 +199,19 @@
 										>
 									</div>
 								</div>
-								<div class="flex justify-between items-center">
-									<span class="font-500">JPG</span>
-									<div class="flex gap-2">
-										<button
-											class="rounded-l-4"
-											on:click={exporter({ copy: act === 'Copy', format: 'jpg' })}>1x</button
-										>
-										<button on:click={exporter({ copy: act === 'Copy', format: 'jpg', size: 2 })}
-											>2x</button
-										>
-										<button
-											class="rounded-r-4"
-											on:click={exporter({ copy: act === 'Copy', format: 'jpg', size: 3 })}
-											>3x</button
-										>
+
+								{#if act === 'Export'}
+									<div class="flex justify-between items-center">
+										<span class="font-500">JPG</span>
+										<div class="flex gap-2">
+											<button class="rounded-l-4" on:click={exporter({ format: 'jpg' })}>1x</button>
+											<button on:click={exporter({ format: 'jpg', size: 2 })}>2x</button>
+											<button class="rounded-r-4" on:click={exporter({ format: 'jpg', size: 3 })}
+												>3x</button
+											>
+										</div>
 									</div>
-								</div>
+								{/if}
 							</div>
 						</div>
 					</Popover>

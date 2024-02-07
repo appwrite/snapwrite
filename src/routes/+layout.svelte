@@ -9,6 +9,9 @@
 	import '@fontsource/fira-code/600.css';
 	import '@fontsource/fira-code/700.css';
 	import '../app.scss';
+
+	import { Toaster } from 'svelte-sonner';
 </script>
 
+<Toaster theme="dark" richColors />
 <slot />
