@@ -1,5 +1,8 @@
 <script lang="ts">
-	import CodeMirror, { type LanguagePreset } from '$lib/components/CodeMirror.svelte';
+	import CodeMirror, {
+		languagePresets,
+		type LanguagePreset
+	} from '$lib/components/CodeMirror.svelte';
 	import Combobox from '$lib/components/Combobox.svelte';
 	import ImageInput from '$lib/components/ImageInput.svelte';
 	import Popover from '$lib/components/Popover.svelte';
@@ -13,24 +16,10 @@
 	import { fly } from 'svelte/transition';
 
 	// Options
-	const langOptions: SelectOption<LanguagePreset>[] = [
-		{
-			value: 'typescript',
-			label: 'Typescript'
-		},
-		{
-			value: 'html',
-			label: 'HTML'
-		},
-		{
-			value: 'css',
-			label: 'CSS'
-		},
-		{
-			value: 'tsx',
-			label: 'TSX'
-		}
-	];
+	const langOptions = Object.entries(languagePresets).map(([key, { label }]) => ({
+		label,
+		value: key
+	})) as SelectOption<LanguagePreset>[];
 	let lang: LanguagePreset = 'typescript';
 
 	const ratios: SelectOption<string>[] = [

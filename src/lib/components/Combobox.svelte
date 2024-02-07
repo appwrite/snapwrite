@@ -33,7 +33,6 @@
 		preventScroll,
 		positioning: {
 			sameWidth: true,
-			fitViewport: true,
 			placement
 		},
 		forceVisible: true,
@@ -59,17 +58,28 @@
 		$inputValue = $selected?.label ?? '';
 	}
 
+	function matches(input: string, option: ComboboxOption<unknown>) {
+		return option.label?.toLowerCase().includes(input.toLowerCase());
+	}
+
+	$: filteredOptions = options.filter((option) => {
+		if ($touchedInput && !matches($inputValue, option)) {
+			return false;
+		}
+		return true;
+	});
+
+	$: isCustom =
+		$inputValue &&
+		!filteredOptions.some((option) => option.label?.toLowerCase() === $inputValue.toLowerCase());
+
 	const DEFAULT_GROUP = 'default';
 	type Group = {
 		label: string;
 		options: ComboboxOption<unknown>[];
 	};
 	$: groups = (function getGroups(): Group[] {
-		const groups = options.reduce<Record<string, ComboboxOption[]>>((carry, option) => {
-			if ($touchedInput && !option.label?.toLowerCase().includes($inputValue.toLowerCase() ?? '')) {
-				return carry;
-			}
-
+		const groups = filteredOptions.reduce<Record<string, ComboboxOption[]>>((carry, option) => {
 			const group = option.group ?? DEFAULT_GROUP;
 			if (!carry[group]) {
 				carry[group] = [];
@@ -102,37 +112,49 @@
 
 {#if $open}
 	<div style:z-index={10000} use:melt={$menu} transition:fly={flyParams}>
-		{#each groups as group}
-			{@const isDefault = group.label === DEFAULT_GROUP}
-			{#if isDefault}
-				<div class="flex flex-col">
-					{#each group.options as option}
-						<button use:melt={$optionEl(option)}>
-							{#if option.icon}
-								<span class={option.icon} aria-hidden="true" />
-							{/if}
-							<span class="capitalize">{option.label}</span>
-							<div class="icon i-tabler-check" />
-						</button>
-					{/each}
-				</div>
-			{:else}
-				<div use:melt={$groupEl(group.label)}>
-					<span use:melt={$groupLabel(group.label)}>
-						{group.label}
-					</span>
+		<div class="max-h-260 overflow-x-clip overflow-y-auto p-8">
+			{#each groups as group}
+				{@const isDefault = group.label === DEFAULT_GROUP}
+				{#if isDefault}
+					<div class="flex flex-col">
+						{#each group.options as option}
+							<button use:melt={$optionEl(option)}>
+								{#if option.icon}
+									<span class={option.icon} aria-hidden="true" />
+								{/if}
+								<span class="capitalize">{option.label}</span>
+								<div class="icon i-tabler-check" />
+							</button>
+						{/each}
+					</div>
+				{:else}
+					<div use:melt={$groupEl(group.label)}>
+						<span use:melt={$groupLabel(group.label)}>
+							{group.label}
+						</span>
 
-					{#each group.options as option}
-						<button use:melt={$optionEl(option)}>
-							{#if option.icon}
-								<span class={option.icon} aria-hidden="true" />
-							{/if}
-							<span class="capitalize">{option.label}</span>
-						</button>
-					{/each}
-				</div>
+						{#each group.options as option}
+							<button use:melt={$optionEl(option)}>
+								{#if option.icon}
+									<span class={option.icon} aria-hidden="true" />
+								{/if}
+								<span class="capitalize">{option.label}</span>
+							</button>
+						{/each}
+					</div>
+				{/if}
+			{/each}
+
+			<!-- CodeMirror does not accept custom languages. Would be nice to add in the future. -->
+			{#if isCustom}
+				<!-- <div class="flex flex-col">
+				<button use:melt={$optionEl({ value: $inputValue, label: $inputValue })}>
+					<span class="capitalize">{`Custom: "${$inputValue}"`}</span>
+					<div class="icon i-tabler-check" />
+				</button>
+			</div> -->
 			{/if}
-		{/each}
+		</div>
 	</div>
 {/if}
 
@@ -179,7 +201,6 @@
 		);
 
 		background-color: var(--color-greyscale-850);
-		padding: 0.5rem;
 	}
 
 	[data-melt-combobox-option] {

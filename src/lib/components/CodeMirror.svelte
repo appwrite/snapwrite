@@ -4,14 +4,45 @@
 		[propOrSelector: string]: string | number | StyleSpec | null;
 	};
 
-	const languagePresets = {
-		javascript: javascript,
-		typescript: () => javascript({ typescript: true }),
-		jsx: () => javascript({ jsx: true }),
-		tsx: () => javascript({ jsx: true, typescript: true }),
-		html: html,
-		css: css
-	} as const;
+	type LanguageConfig = {
+		label: string;
+		highlighter: () => LanguageSupport;
+	};
+
+	export const languagePresets = {
+		javascript: {
+			label: 'Javascript',
+			highlighter: javascript
+		},
+		typescript: {
+			label: 'Typescript',
+			highlighter: () => javascript({ typescript: true })
+		},
+		jsx: {
+			label: 'JSX',
+			highlighter: () => javascript({ jsx: true })
+		},
+		tsx: {
+			label: 'TSX',
+			highlighter: () => javascript({ jsx: true, typescript: true })
+		},
+		html: {
+			label: 'HTML',
+			highlighter: html
+		},
+		css: {
+			label: 'CSS',
+			highlighter: css
+		},
+		python: {
+			label: 'Python',
+			highlighter: python
+		},
+		php: {
+			label: 'PHP',
+			highlighter: php
+		}
+	} as const satisfies Record<string, LanguageConfig>;
 	export type LanguagePreset = keyof typeof languagePresets;
 </script>
 
@@ -31,6 +62,8 @@
 	import { javascript } from '@codemirror/lang-javascript';
 	import { html } from '@codemirror/lang-html';
 	import { css } from '@codemirror/lang-css';
+	import { python } from '@codemirror/lang-python';
+	import { php } from '@codemirror/lang-php';
 	import { tags } from '@lezer/highlight';
 
 	let classes = '';
@@ -69,7 +102,7 @@
 			placeholder,
 			editable,
 			readonly,
-			languagePresets[lang ?? 'javascript']?.()
+			languagePresets[lang ?? 'javascript']?.highlighter()
 		),
 		syntaxHighlighting(
 			HighlightStyle.define([
