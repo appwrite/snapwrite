@@ -63,7 +63,9 @@ const spacingUtilities: Rule[] = [
 	['bottom', 'bottom'],
 	['inset', 'inset'],
 	['text', 'font-size'],
-	['rounded', 'border-radius']
+	['rounded', 'border-radius'],
+	['rounded-l', 'border-top-left-radius', 'border-bottom-left-radius'],
+	['rounded-r', 'border-top-right-radius', 'border-bottom-right-radius']
 ].map(([prefix, ...properties]) => [
 	new RegExp(`^${prefix}-(\\d+)$`),
 	((match) => {

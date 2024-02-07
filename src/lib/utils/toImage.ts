@@ -14,7 +14,7 @@ export function save(dataUrl: string) {
 }
 
 export async function toImage(node: HTMLElement, format: 'svg' | 'png' | 'jpg', size: number = 1) {
-	const options: Options = {
+	const options = {
 		width: node.offsetWidth * size,
 		height: node.offsetHeight * size,
 		quality: 1,
@@ -26,7 +26,7 @@ export async function toImage(node: HTMLElement, format: 'svg' | 'png' | 'jpg', 
 			borderRadius: '0',
 			marginInline: '0'
 		}
-	};
+	} satisfies Options;
 
 	let dataUrl: string;
 	switch (format) {
@@ -44,5 +44,5 @@ export async function toImage(node: HTMLElement, format: 'svg' | 'png' | 'jpg', 
 		}
 	}
 
-	return dataUrl;
+	return { dataUrl, options };
 }

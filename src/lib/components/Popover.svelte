@@ -14,6 +14,6 @@
 
 {#if $open}
 	<div class="z-100" use:melt={$content} transition:fly={{ duration: 150, y: -2 }}>
-		<slot />
+		<slot open={$open} />
 	</div>
 {/if}

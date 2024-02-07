@@ -90,14 +90,27 @@
 	let frame: HTMLElement;
 	let capturing = false;
 	let url = '';
-	function exporter(format: 'svg' | 'png' | 'jpg', size: number = 1) {
+
+	type ExporterArgs = {
+		format: 'svg' | 'png' | 'jpg';
+		size?: number;
+		copy?: boolean;
+	};
+
+	function exporter({ format, size = 1, copy = false }: ExporterArgs) {
 		return async () => {
 			if (capturing) return;
 			capturing = true;
 
-			const dataUrl = await toImage(frame, format, size);
+			const { dataUrl } = await toImage(frame, format, size);
 
-			save(dataUrl);
+			if (copy) {
+				const blob = await fetch(dataUrl).then((res) => res.blob());
+				const item = new ClipboardItem({ [blob.type]: blob });
+				navigator.clipboard.write([item]);
+			} else {
+				save(dataUrl);
+			}
 			// url = dataUrl;
 
 			capturing = false;
@@ -128,37 +141,62 @@
 				{/if}
 			</div>
 
-			<Popover>
-				<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}
-					>Export</button
-				>
+			<div class="flex items-center gap-8">
+				{#each ['Export', 'Copy'] as act}
+					<Popover>
+						<button slot="trigger" let:trigger class="button is-secondary" use:melt={trigger}
+							>{act}</button
+						>
 
-				<div class="exporter p-16">
-					<div class="flex flex-col gap-16">
-						<div class="flex justify-between items-center">
-							<span class="font-500">SVG</span>
+						<div class="exporter p-16">
+							<div class="flex flex-col gap-16">
+								<div class="flex justify-between items-center">
+									<span class="font-500">SVG</span>
 
-							<button class="rounded-1" on:click={exporter('svg')}>1x</button>
-						</div>
-						<div class="flex justify-between items-center">
-							<span class="font-500">PNG</span>
-							<div class="flex gap-2">
-								<button class="rounded-l-1" on:click={exporter('png')}>1x</button>
-								<button on:click={exporter('png', 2)}>2x</button>
-								<button class="rounded-r-1" on:click={exporter('png', 3)}>3x</button>
+									<button
+										class="rounded-4"
+										on:click={exporter({ copy: act === 'Copy', format: 'svg' })}>1x</button
+									>
+								</div>
+								<div class="flex justify-between items-center">
+									<span class="font-500">PNG</span>
+									<div class="flex gap-2">
+										<button
+											class="rounded-l-4"
+											on:click={exporter({ copy: act === 'Copy', format: 'png' })}>1x</button
+										>
+										<button on:click={exporter({ copy: act === 'Copy', format: 'png', size: 2 })}
+											>2x</button
+										>
+										<button
+											class="rounded-r-4"
+											on:click={exporter({ copy: act === 'Copy', format: 'png', size: 3 })}
+											>3x</button
+										>
+									</div>
+								</div>
+								<div class="flex justify-between items-center">
+									<span class="font-500">JPG</span>
+									<div class="flex gap-2">
+										<button
+											class="rounded-l-4"
+											on:click={exporter({ copy: act === 'Copy', format: 'jpg' })}>1x</button
+										>
+										<button on:click={exporter({ copy: act === 'Copy', format: 'jpg', size: 2 })}
+											>2x</button
+										>
+										<button
+											class="rounded-r-4"
+											on:click={exporter({ copy: act === 'Copy', format: 'jpg', size: 3 })}
+											>3x</button
+										>
+									</div>
+								</div>
 							</div>
 						</div>
-						<div class="flex justify-between items-center">
-							<span class="font-500">JPG</span>
-							<div class="flex gap-2">
-								<button class="rounded-l-1" on:click={exporter('jpg')}>1x</button>
-								<button on:click={exporter('jpg', 2)}>2x</button>
-								<button class="rounded-r-1" on:click={exporter('jpg', 3)}>3x</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</Popover>
+					</Popover>
+				{/each}
+			</div>
 		</div>
 
 		<Tooltip>
