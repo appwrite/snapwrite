@@ -113,7 +113,6 @@
 
 						if (copy) {
 							const blob = await fetch(dataUrl).then((res) => res.blob());
-							console.log(blob.type);
 							const item = new ClipboardItem({ [blob.type]: blob });
 							navigator.clipboard.write([item]);
 						} else {
@@ -130,14 +129,10 @@
 			});
 
 			toast.promise(promise, {
-				loading: 'Loading...',
+				loading: 'Generating image...',
 				success: copy ? 'Copied!' : 'Downloaded!',
 				error: 'Failed to export. Please try again.'
 			});
-			// toast.promise(p(), {
-			// 	success: copy ? 'Copied!' : 'Downloaded!',
-			// 	error: 'Failed to export. Please try again.'
-			// });
 		};
 	}
 
@@ -178,7 +173,11 @@
 									<div class="flex justify-between items-center">
 										<span class="font-500">SVG</span>
 
-										<button class="rounded-4" on:click={exporter({ format: 'svg' })}>1x</button>
+										<button
+											disabled={capturing}
+											class="rounded-4"
+											on:click={exporter({ format: 'svg' })}>1x</button
+										>
 									</div>
 								{/if}
 
@@ -186,13 +185,17 @@
 									<span class="font-500">PNG</span>
 									<div class="flex gap-2">
 										<button
+											disabled={capturing}
 											class="rounded-l-4"
 											on:click={exporter({ copy: act === 'Copy', format: 'png' })}>1x</button
 										>
-										<button on:click={exporter({ copy: act === 'Copy', format: 'png', size: 2 })}
+										<button
+											disabled={capturing}
+											on:click={exporter({ copy: act === 'Copy', format: 'png', size: 2 })}
 											>2x</button
 										>
 										<button
+											disabled={capturing}
 											class="rounded-r-4"
 											on:click={exporter({ copy: act === 'Copy', format: 'png', size: 3 })}
 											>3x</button
@@ -204,10 +207,18 @@
 									<div class="flex justify-between items-center">
 										<span class="font-500">JPG</span>
 										<div class="flex gap-2">
-											<button class="rounded-l-4" on:click={exporter({ format: 'jpg' })}>1x</button>
-											<button on:click={exporter({ format: 'jpg', size: 2 })}>2x</button>
-											<button class="rounded-r-4" on:click={exporter({ format: 'jpg', size: 3 })}
-												>3x</button
+											<button
+												disabled={capturing}
+												class="rounded-l-4"
+												on:click={exporter({ format: 'jpg' })}>1x</button
+											>
+											<button disabled={capturing} on:click={exporter({ format: 'jpg', size: 2 })}
+												>2x</button
+											>
+											<button
+												disabled={capturing}
+												class="rounded-r-4"
+												on:click={exporter({ format: 'jpg', size: 3 })}>3x</button
 											>
 										</div>
 									</div>
