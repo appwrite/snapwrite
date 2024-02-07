@@ -1,5 +1,4 @@
-import { preprocessMeltUI } from '@melt-ui/pp';
-import sequence from 'svelte-sequential-preprocessor';
+import { preprocessMeltUI, sequence } from '@melt-ui/pp';
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/kit/vite';
 /** @type {import('@sveltejs/kit').Config}*/

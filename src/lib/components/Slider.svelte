@@ -8,7 +8,7 @@
 	export let label: string;
 
 	const {
-		elements: { root, range, thumb },
+		elements: { root, range, thumbs },
 		states: { value: localValue }
 	} = createSlider({
 		min,
@@ -34,9 +34,11 @@
 		<span class="block h-3px w-full bg-black">
 			<span use:melt={$range} class="h-3px bg-white" />
 		</span>
-		<span
-			use:melt={$thumb()}
-			class="block square-12 rounded-full bg-white focus:ring-4 focus:ring-black/40"
-		/>
+		{#each $thumbs as thumb}
+			<span
+				use:melt={thumb}
+				class="block square-12 rounded-full bg-white outline-none focus:ring-4 ring-[hsl(var(--color-pink-600-hsl))]"
+			/>
+		{/each}
 	</span>
 </div>
