@@ -58,13 +58,30 @@
 	let fontSize = 16;
 	let scale = 1;
 
+	const bgThemeOptions: SelectOption<string>[] = [
+		{ label: 'Dark', value: '/' },
+		{ label: 'Light', value: '/light/' }
+	];
+
+	let bgTheme = bgThemeOptions[0].value;
+
 	const bgOptions: SelectOption<string>[] = [
-		{ label: 'BG Dark 1', value: 'bg-1.png' },
+		{ label: 'Appwrite', value: 'appwrite.png' },
+		{ label: 'Lines', value: 'lines.png' },
+		{ label: 'Grid', value: 'grid.png' },
+		{ label: 'Dot Matrix', value: 'dotmatrix.png' },
+		{ label: 'Heatmap 1', value: 'heatmap1.png' },
+		{ label: 'Heatmap 2', value: 'heatmap2.png' },
+		{ label: 'Heatmap 3', value: 'heatmap3.png' },
 		{ label: 'Custom', value: 'custom' }
 	];
 
 	let bg = bgOptions[0].value;
 	let customBg: string | null = null;
+
+
+	// Rendered Image URL (theme + background)
+	$: renderedImage = '/images' + bgTheme + bg;
 
 	// Debug Info
 	$: trueRatio = (() => {
@@ -158,6 +175,10 @@
 						<ImageInput bind:value={customBg} />
 					</div>
 				{/if}
+			</div>
+
+			<div class="flex items-center gap-4">
+				<Select label="Background Theme" options={bgThemeOptions} bind:value={bgTheme} />
 			</div>
 
 			<div class="flex items-center gap-8">
@@ -276,7 +297,7 @@
 			bind:this={frame}
 			style:--p-ratio={ratio}
 			style:--p-resize={capturing ? 'none' : 'both'}
-			style:--p-bg="url({bg === 'custom' ? customBg : `/images/${bg}`})"
+			style:--p-bg="url({bg === 'custom' ? customBg : renderedImage})"
 		>
 			<div class="code-window" style:--p-scale={scale}>
 				<div class="flex gap-8 mis-8">
