@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 	import { javascript } from '@codemirror/lang-javascript';
+	import { json } from '@codemirror/lang-json';
 	import { html } from '@codemirror/lang-html';
 	import { css } from '@codemirror/lang-css';
 	import { python } from '@codemirror/lang-python';
@@ -31,6 +32,10 @@
 		javascript: {
 			label: 'Javascript',
 			highlighter: javascript
+		},
+		json: {
+			label: 'JSON',
+			highlighter: json
 		},
 		typescript: {
 			label: 'Typescript',
