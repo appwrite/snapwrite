@@ -148,9 +148,6 @@
 	$: view && update(value);
 	$: view && state_extensions && reconfigure();
 
-	const obj = { a: 1, b: { c() {} } };
-	obj.b.c();
-
 	onMount(() => (view = create_editor_view()));
 	onDestroy(() => view?.destroy());
 
