@@ -67,8 +67,8 @@ importers:
         specifier: ^0.86.0
         version: 0.86.6(svelte@4.2.20)
       '@sveltejs/adapter-static':
-        specifier: ^2.0.0
-        version: 2.0.3(@sveltejs/kit@1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1)))
+        specifier: ^3.0.0
+        version: 3.0.11(@sveltejs/kit@1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1)))
       '@sveltejs/kit':
         specifier: ^1.26.0
         version: 1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1))
@@ -935,10 +935,10 @@ packages:
       rollup:
         optional: true
 
-  '@sveltejs/adapter-static@2.0.3':
-    resolution: {integrity: sha512-VUqTfXsxYGugCpMqQv1U0LIdbR3S5nBkMMDmpjGVJyM6Q2jHVMFtdWJCkeHMySc6mZxJ+0eZK3T7IgmUCDrcUQ==}
+  '@sveltejs/adapter-static@3.0.11':
+    resolution: {integrity: sha512-DyX1bWx9uiPxzq7Mr+jnxqY+w3UhE3pYy5D1LcfdS++2KZTHSZBD60BoP44LjVgtGILfeOQCF8ESqzmLVrz4Ng==}
     peerDependencies:
-      '@sveltejs/kit': ^1.5.0
+      '@sveltejs/kit': ^2.0.0
 
   '@sveltejs/kit@1.30.4':
     resolution: {integrity: sha512-JSQIQT6XvdchCRQEm7BABxPC56WP5RYVONAi+09S8tmzeP43fBsRlr95bFmsTQM2RHBldfgQk+jgdnsKI75daA==}
@@ -2946,7 +2946,7 @@ snapshots:
     optionalDependencies:
       rollup: 3.29.5
 
-  '@sveltejs/adapter-static@2.0.3(@sveltejs/kit@1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1)))':
+  '@sveltejs/adapter-static@3.0.11(@sveltejs/kit@1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1)))':
     dependencies:
       '@sveltejs/kit': 1.30.4(supports-color@7.2.0)(svelte@4.2.20)(vite@4.5.14(sass@1.107.1))
 
